@@ -1,0 +1,93 @@
+---
+layout: ../../../layouts/ProjectLayout.astro
+title: "Factory Scheduling & KPI Reporting API"
+description: "A constraint-based production scheduling service. It accepts a job-shop scheduling problem as JSON, returns a feasible schedule that minimizes total tardiness, and reports KPIs. A React frontend renders the result as an interactive Gantt chart."
+heroImage:
+  - "/favicon.svg"
+badge: "Full-Stack"
+tags:
+  - Python
+  - FastAPI
+  - OR-Tools CP-SAT
+  - React
+  - TypeScript
+  - Vite
+githubUrl: "https://github.com/Nick-Trigger/Factory-Scheduling-and-KPI-Reporting-API-with-Frontend"
+---
+
+## Overview
+
+The Factory Scheduling & KPI Reporting service solves **job-shop production scheduling** as a constraint optimization problem. A client `POST`s a scheduling problem as JSON (products, routes, resources, working windows, and due dates), and the service returns a feasible schedule that minimizes total tardiness, along with a set of operational KPIs. A React frontend visualizes the result as an inline-SVG Gantt chart with per-product color coding.
+
+The system is built for extensibility. New client input/output formats, new objective functions, and new constraints each plug in as localized changes to a single file, without touching the solver core.
+
+---
+
+## Tech Stack
+
+| Layer | Technologies |
+|-------|--------------|
+| **Backend** | Python 3.12, FastAPI, OR-Tools CP-SAT solver, managed with `uv` |
+| **Frontend** | React 19 + TypeScript (React Compiler), built with Vite |
+| **Styling** | TailwindCSS v4 + daisyUI v5 |
+| **Visualization** | Hand-rolled inline-SVG Gantt with per-product color coding |
+| **CI** | GitHub Actions runs the test suite on every push and PR |
+
+---
+
+## The Scheduling Problem
+
+The core engine is built on **OR-Tools CP-SAT**, chosen for its native support for interval variables, no-overlap constraints, and optional intervals. This made it a far better fit than a MIP or a hand-rolled heuristic.
+
+Key modeling decisions:
+
+- **Optional intervals.** Each operation gets one optional interval per `(resource, working window)` pair, with conditional containment enforced via `only_enforce_if`.
+- **Resource selection.** `add_exactly_one` over per-resource presence booleans.
+- **No-overlap.** `add_no_overlap` per resource across all windows.
+- **Family-dependent changeovers.** The standard disjunctive pattern: one boolean per unordered pair selects ordering, and the setup constraint for the chosen direction is enforced.
+- **Tardiness.** `tardiness >= last_op.end - due`, lower-bounded at zero, summed, and minimized.
+- **Determinism.** A single search worker and a fixed random seed yield byte-identical output across runs.
+
+---
+
+## Architecture
+
+The system enforces a strict separation between **canonical** types (client-agnostic, used by the solver, KPIs, and validation) and **adapter** types (client-specific JSON shapes). Everything downstream of the adapter speaks the same vocabulary, regardless of which client sent the request.
+
+A `POST /schedule` request flows through six stages:
+
+1. **Parse.** The client adapter validates the JSON shape (Pydantic) and translates it into the canonical `SchedulingProblem`.
+2. **Diagnose.** Pre-solve structural checks flag common infeasibility causes (missing capabilities, windows too short, demand exceeding capacity, impossible deadlines) and short-circuit to a `422` with concrete reasons.
+3. **Solve.** CP-SAT builds the model by walking the constraint registry, applying the selected objective, and solving. It returns a canonical `Solution`.
+4. **Compute KPIs.** Tardiness, changeover count and minutes, makespan, and per-resource utilization.
+5. **Validate.** The validator re-walks the constraint registry, independently re-checking each invariant against the final solution to catch solver bugs.
+6. **Format.** The adapter translates the canonical solution and KPIs back into the client's response shape.
+
+Three plug-in registries follow the same pattern: `adapters/` (one file per wire format), `objectives/` (one file per objective function), and `constraints/` (one file per hard constraint). Adding a client, objective, or constraint is a localized change.
+
+---
+
+## KPIs Reported
+
+- **Tardiness.** Total minutes late across all products.
+- **Changeover count & minutes.** Family-boundary setups on each resource.
+- **Makespan.** Latest end minus earliest start.
+- **Per-resource utilization.** Processing minutes over horizon-clipped calendar minutes.
+
+---
+
+## Frontend
+
+The React frontend lets a user load the spec's example problem or upload a custom JSON payload, then renders the returned schedule as an inline-SVG Gantt chart with per-product color coding. The backend is fully usable on its own, via `curl`, Postman, or the auto-generated Swagger UI, without ever running the frontend.
+
+---
+
+## Robustness
+
+The service distinguishes three failure modes by response shape:
+
+- **`422` infeasible.** The problem genuinely cannot be solved. The `why` field lists concrete, actionable reasons.
+- **`400` bad request.** Client-side input errors, such as an unknown objective mode.
+- **`500` invariant error.** A post-solve validation failure, representing a solver or model bug rather than user input.
+
+The test suite, run automatically in CI, covers a validation invariant test, a KPI math test, and an infeasibility test, mirroring the three tests required by the project spec.

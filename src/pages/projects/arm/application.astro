@@ -1,0 +1,41 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Nicholas Trigger - Pulse Mate VentureWell Application" sideBarActiveItemID="projects" includeSidebar={false}>
+  <div class="flex items-center justify-between mb-8 max-w-screen-xl mx-auto px-2">
+    <div>
+      <a href="/projects/arm" class="btn btn-ghost btn-sm gap-1 -ml-2 mb-1">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+        Back to project
+      </a>
+      <h1 class="text-3xl font-bold">Pulse Mate: VentureWell E-Team Application</h1>
+      <p class="text-base-content/60 text-sm mt-1">Team PATS · Duke University · Summer 2023 Cohort</p>
+    </div>
+    <a href="/PATS_arm.pdf" download class="btn btn-primary btn-sm gap-2">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="7 10 12 15 17 10"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3"></line>
+      </svg>
+      Download PDF
+    </a>
+  </div>
+
+  <div class="w-full rounded-xl overflow-hidden shadow-2xl border border-base-300">
+    <object
+      data="/PATS_arm.pdf#toolbar=1&view=FitH"
+      type="application/pdf"
+      style="width: 100%; height: 90vh; min-height: 600px; display: block;"
+    >
+      <div class="flex flex-col items-center justify-center gap-4 p-12 text-base-content/60">
+        <p>Your browser doesn't support inline PDFs.</p>
+        <a href="/PATS_arm.pdf" target="_blank" class="btn btn-primary">
+          Open PDF
+        </a>
+      </div>
+    </object>
+  </div>
+</BaseLayout>

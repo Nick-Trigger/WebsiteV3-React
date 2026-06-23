@@ -1,0 +1,45 @@
+---
+const { sideBarActiveItemID } = Astro.props;
+---
+
+<ul class="menu grow shrink menu-md overflow-y-auto flex flex-col items-start w-full items-stretch">
+    <li><a class="py-3 my-0.5 text-base" id="nav-home" href="/">Home</a></li>
+    <li><a class="py-3 my-0.5 text-base" id="nav-projects" href="/projects">Projects</a></li>
+    <li>
+        <a class="py-3 my-0.5 text-base" id="nav-cv" href="/cv">CV</a>
+        <ul id="cv-submenu" class="pl-2 border-l border-base-content/20 ml-3 hidden">
+            <li><a class="py-1.5 text-sm" href="/cv#profile">Profile</a></li>
+            <li><a class="py-1.5 text-sm" href="/cv#education">Education</a></li>
+            <li><a class="py-1.5 text-sm" href="/cv#engineering-experience">Engineering Experience</a></li>
+            <li><a class="py-1.5 text-sm" href="/cv#research-experience">Research Experience</a></li>
+            <li><a class="py-1.5 text-sm" href="/cv#patents">Patents</a></li>
+            <li><a class="py-1.5 text-sm" href="/cv#leadership">Leadership</a></li>
+            <li><a class="py-1.5 text-sm" href="/cv#certifications">Certifications</a></li>
+            <li><a class="py-1.5 text-sm" href="/cv#skills">Skills</a></li>
+        </ul>
+    </li>
+</ul>
+
+<script>
+    const navItems = [
+        { id: 'nav-home',     pattern: /^\/$/ },
+        { id: 'nav-projects', pattern: /^\/projects/ },
+        { id: 'nav-cv',       pattern: /^\/cv/ },
+    ];
+
+    function updateNav() {
+        const path = window.location.pathname;
+
+        for (const { id, pattern } of navItems) {
+            const el = document.getElementById(id);
+            if (el) el.classList.toggle('bg-primary', pattern.test(path));
+            if (el) el.classList.toggle('text-white', pattern.test(path));
+        }
+
+        const submenu = document.getElementById('cv-submenu');
+        if (submenu) submenu.classList.toggle('hidden', !/^\/cv/.test(path));
+    }
+
+    document.addEventListener('astro:page-load', updateNav);
+    updateNav();
+</script>

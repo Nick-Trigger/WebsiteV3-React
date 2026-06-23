@@ -1,0 +1,57 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import SideBar from "../components/SideBar.astro";
+
+import { SITE_TITLE, SITE_DESCRIPTION } from "../config";
+import "../styles/global.css";
+
+const {
+  image,
+  title = SITE_TITLE,
+  description = SITE_DESCRIPTION,
+  includeSidebar = true,
+  sideBarActiveItemID,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" style="scroll-padding-top: 5rem; scroll-behavior: smooth;">
+  <head>
+    <BaseHead
+      title={title}
+      description={description}
+      image={image} />
+    <script is:inline>
+      const theme = localStorage.getItem('theme') ||
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    </script>
+    <script>
+      // Runs once. Copies data-theme onto the incoming document before ClientRouter
+      // swaps the DOM, preventing a flash back to the default theme on every navigation.
+      document.addEventListener('astro:before-swap', (e) => {
+        const theme = localStorage.getItem('theme') ||
+          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        e.newDocument.documentElement.setAttribute('data-theme', theme);
+      });
+    </script>
+  </head>
+
+  <body>
+    <div class="bg-base-100 drawer lg:drawer-open">
+      <input id="my-drawer" type="checkbox" class="drawer-toggle" />
+      <div class="drawer-content bg-base-100">
+        <Header title={SITE_TITLE} />
+        <div class="md:flex md:justify-center">
+          <main class="p-6 pt-10 lg:max-w-[80%] max-w-[100vw]">
+            <slot />
+          </main>
+        </div>
+        <Footer />
+      </div>
+      {includeSidebar && <SideBar sideBarActiveItemID={sideBarActiveItemID} />}
+    </div>
+  </body>
+</html>

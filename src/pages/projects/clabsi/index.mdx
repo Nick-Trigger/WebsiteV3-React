@@ -1,0 +1,193 @@
+---
+layout: ../../../layouts/ProjectLayout.astro
+title: "CLABSI Prevention Device"
+description: "A handheld UV-C disinfection device for central-line hubs, developed at Duke University's Pratt School of Engineering."
+heroImage:
+  - "/clabfree.png"
+  - "/clabfree2_pcb.jpg"
+  - "/clabfree_frontopen.jpg"
+  - "/clabfree_frontclosed_cath.jpg"
+  - "/clabfree_mdesign.png"
+badge: "Senior Capstone"
+tags:
+  - Embedded Systems
+  - PCB Design
+  - Zephyr RTOS
+  - Medical Device
+  - Duke BME
+githubUrl: "https://github.com/Nick-Trigger/CLABSI"
+docs:
+  - title: "Design History File"
+    url: "/projects/clabsi/dhf"
+    description: "Final Design History File"
+  - title: "Final Poster"
+    url: "/projects/clabsi/poster"
+    description: "Duke BME capstone poster"
+  - title: "Interactive BOM"
+    url: "/clabsi-ibom.html"
+    description: "KiCad interactive bill of materials; click components to highlight on the PCB"
+  - title: "Gerber Files"
+    url: "https://github.com/Nick-Trigger/CLABSI/tree/main/KiCad/Exports"
+    description: "Fab-ready Gerber exports for all three PCB boards"
+  - title: "Schematic & Layout"
+    url: "https://github.com/Nick-Trigger/CLABSI/tree/main/KiCad/CLABSI%20(FINAL)"
+    description: "Final revision schematic, PCB layout, BOM, and 3D STEP models"
+  - title: "Firmware Source"
+    url: "https://github.com/Nick-Trigger/CLABSI/tree/main/Firmware"
+    description: "Zephyr RTOS application for the nRF54L15 MCU"
+---
+
+<div class="not-prose flex flex-wrap gap-2 mb-6 text-sm text-base-content/70">
+  <span>D. Bearden · D. Chong · N. Kodua · F. Rudd · N. Trigger</span>
+  <span class="opacity-40">|</span>
+  <span>Dept. of Biomedical Engineering, Duke University</span>
+</div>
+
+<div class="not-prose grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+  <div class="stat bg-base-300 rounded-xl p-4 shadow">
+    <div class="stat-title text-xs text-base-content">Shutoff Time</div>
+    <div class="stat-value text-2xl text-primary">17 ms</div>
+    <div class="stat-desc text-base-content">450 ms limit (ISO 15858)</div>
+  </div>
+  <div class="stat bg-base-300 rounded-xl p-4 shadow">
+    <div class="stat-title text-xs text-base-content">CFU Reduction</div>
+    <div class="stat-value text-2xl text-secondary">4-log</div>
+    <div class="stat-desc text-base-content">EPA OCSPP 810.2200</div>
+  </div>
+  <div class="stat bg-base-300 rounded-xl p-4 shadow">
+    <div class="stat-title text-xs text-base-content">Device Weight</div>
+    <div class="stat-value text-2xl text-accent">204 g</div>
+    <div class="stat-desc text-base-content">One-handed operation</div>
+  </div>
+  <div class="stat bg-base-300 rounded-xl p-4 shadow">
+    <div class="stat-title text-xs text-base-content">UV-C Bandwidth</div>
+    <div class="stat-value text-2xl text-info">263–273 nm</div>
+    <div class="stat-desc text-base-content">2.49 ± 0.047 mW optical</div>
+  </div>
+</div>
+
+## Problem & Need
+
+Central Line-Associated Bloodstream Infections (CLABSIs) occur when bacteria enter the bloodstream via a central line. **40,000 CLABSIs occur annually** in the US, costing hospitals approximately **$1.9B per year**, and 65–70% are completely preventable with proper disinfection.
+
+The current standard of care is the *Scrub-the-Hub* technique, which relies entirely on nurse compliance with manual protocol. Infections arise from human error and inconsistent adherence to workflow. This device removes that dependency.
+
+> **Need Statement:** Hospital nurses need a quick, reliable, and user-friendly system to disinfect central lines to maintain adherence to proper protocols and reduce infection risk in patients.
+
+---
+
+## Why UV-C Disinfection?
+
+DNA and RNA strongly absorb 260 nm UV-C incident light. The high-energy photons create nitrogenous base lesions, distorting the helix structure and blocking transcription and translation, effectively sterilizing the hub surface without chemicals, contact, or manual technique.
+
+---
+
+## Device Design
+
+### Mechanical
+
+The enclosure is resin-printed to prevent UV-C light leakage. Key mechanical elements:
+
+| # | Component | Role |
+|---|-----------|------|
+| 1 | Resin-Printed Casing | Contains UV-C, prevents leakage |
+| 2 | Disinfection Chamber | Where the catheter hub is inserted |
+| 3 | RGB LED | Color-coded status during operation and errors |
+| 4 | Activation Button | Single-button start/abort |
+| 5 | Opening Aperture | Seals around the catheter to prevent leakage |
+| 6 | Safety Interlocks (×2) | Abort if device opens prematurely |
+
+### Electrical
+
+Three custom KiCad PCBs make up the electrical system:
+
+| Board | Function |
+|-------|----------|
+| **Main** | nRF54L15 MCU, power management, BMS (MAX17260), RGB LED driver (LP5815) |
+| **UVC** | UV-C LED driver with current-limiting elements |
+| **Base** | Mechanical base and connector board |
+
+---
+
+## Firmware
+
+Written in C on **Zephyr RTOS** (nRF Connect SDK), targeting the nRF54L15. The application runs a hierarchical state machine (Zephyr SMF):
+
+```
+INIT → IDLE ──► DISINFECTING ──► IDLE
+            ──► CHARGING      ──► (abort via button or interlock)
+            ──► ERROR
+```
+
+| State | Behavior |
+|-------|----------|
+| `INIT` | Initialize GPIO, PWM, I2C, BMS, safety interlocks |
+| `IDLE` | Awaiting button press; battery SOC displayed on RGB LED |
+| `CHARGING` | Charge in progress; RGB indicates charge level |
+| `DISINFECTING` | UV-C LED at full PWM; instant abort on interlock open or button press |
+| `ERROR` | RGB error pattern + buzzer; cleared by button press |
+
+The critical safety path: interlock GPIO interrupts submit a work item that disables PWM output before the SMF state transition completes, with a mean shutoff time of **17 ± 2 ms**, well within the 450 ms safety limit derived from ISO 15858.
+
+---
+
+## Testing Results
+
+<div class="not-prose overflow-x-auto mb-4">
+  <table class="table table-zebra w-full">
+    <thead>
+      <tr>
+        <th>Metric</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Device Weight</td><td>204 g</td></tr>
+      <tr><td>UV-C LED Optical Power</td><td>2.49 ± 0.047 mW</td></tr>
+      <tr><td>UV-C LED Bandwidth</td><td>262.9 – 273.2 nm</td></tr>
+      <tr><td>Rapid Shutoff Time</td><td>17 ± 2 ms (limit: &lt;450 ms)</td></tr>
+      <tr><td>Germicidal CFU Reduction</td><td>4-log reduction (n=3 replicates)</td></tr>
+    </tbody>
+  </table>
+</div>
+
+Germicidal testing used DH5α bacteria incubated, seeded, and adhered to catheter hubs at room temperature. Hubs were irradiated with UV-C at 0, 2, and 4 hours, then vortexed for CFU counts by serial dilution, achieving a 4-log reduction.
+
+---
+
+## Regulatory & Market
+
+The CLAB-Free device will be classified as a **Class II FDA device** given the inherent risk of UV light and catheter use. Two potential pathways:
+
+- **510(k), Preferred:** If determined similar enough to existing UV surface-disinfecting devices
+- **De Novo:** If disinfection through catheter tubing constitutes a novel use case
+
+<div class="not-prose grid grid-cols-1 sm:grid-cols-3 gap-3 my-4">
+  <div class="card bg-neutral p-4 rounded-xl shadow">
+    <div class="text-xs text-base-content/60 mb-1">Total Available Market</div>
+    <div class="text-xl font-bold text-primary">~$1.61B</div>
+    <div class="text-sm text-base-content/70">Global catheter-related bloodstream infection market (2024)</div>
+  </div>
+  <div class="card bg-neutral p-4 rounded-xl shadow">
+    <div class="text-xs text-base-content/60 mb-1">Serviceable Available Market</div>
+    <div class="text-xl font-bold text-secondary">~$481M</div>
+    <div class="text-sm text-base-content/70">US central-line infection market (minimum estimate)</div>
+  </div>
+  <div class="card bg-neutral p-4 rounded-xl shadow">
+    <div class="text-xs text-base-content/60 mb-1">Serviceable Obtainable Market</div>
+    <div class="text-xl font-bold text-accent">~$16.1M</div>
+    <div class="text-sm text-base-content/70">5% of preventable CLABSIs</div>
+  </div>
+</div>
+
+---
+
+## Conclusion & Next Steps
+
+The device successfully disinfects central line hubs using UV-C light in the germicidal range, achieves a 4-log CFU reduction, and operates safely within ISO 15858 exposure limits. It is portable, one-handed, and reusable between patients.
+
+**Planned next steps:**
+- Nurse usability testing
+- Design of docking/recharging stations
+- Autoclavable disinfection chamber redesign
+- Head-to-head testing against proper and improper Scrub-the-Hub technique
