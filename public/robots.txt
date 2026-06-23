@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://nicholastrigger.com/sitemap-index.xml
+Sitemap: https://nicholastrigger.com/sitemap.xml
