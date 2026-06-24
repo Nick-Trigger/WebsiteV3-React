@@ -1,8 +1,8 @@
 # build output
 dist/
 
-# generated types
-.astro/
+# vite-react-ssg temp output
+.vite-react-ssg-temp/
 
 # dependencies
 node_modules/
