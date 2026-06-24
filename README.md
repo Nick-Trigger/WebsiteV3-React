@@ -1,101 +1,51 @@
 # nicholastrigger.com
 
-Personal portfolio site for Nicholas Trigger — Duke BME Alum '26, focusing on biomedical device engineering.
+The personal portfolio of Nicholas Trigger — Duke BME Alum '26, focused on biomedical device engineering, embedded systems, and medical imaging. Live at [nicholastrigger.com](https://nicholastrigger.com).
 
-Live at [nicholastrigger.com](https://nicholastrigger.com) [![Deployment](https://github.com/Nick-Trigger/website2/actions/workflows/deploy.yml/badge.svg)](https://github.com/Nick-Trigger/website2/actions/workflows/deploy.yml)
-
----
-
-## Stack
-
-- **[React 19](https://react.dev)** — component-based UI
-- **[Vite 6](https://vitejs.dev)** — dev server and bundler
-- **[vite-react-ssg](https://github.com/Daydreamer-riri/vite-react-ssg)** — static prerendering; every route is emitted as real HTML for SEO, social previews, and deep-linkable URLs on GitHub Pages
-- **[React Router 6](https://reactrouter.com)** — client-side routing
-- **[Tailwind CSS v4](https://tailwindcss.com)** + **[DaisyUI v5](https://daisyui.com)** — styling and components
-- **[@tailwindcss/typography](https://tailwindcss.com/docs/typography-plugin)** — `prose` rendering for project content
+[![Deployment](https://github.com/Nick-Trigger/website2/actions/workflows/deploy.yml/badge.svg)](https://github.com/Nick-Trigger/website2/actions/workflows/deploy.yml)
 
 ---
 
-## Project Structure
+## What it is
+
+A small, content-focused portfolio: a landing page with a bio and featured work, a full projects listing, detailed write-ups for each engineering project (UV-C disinfection device, arterial-line trainer, dog activity trackers, ECG synthesizer, and more), and a long-form CV. Several projects also embed supporting PDFs — design history files, posters, and grant applications — viewed inline.
+
+## How it's built
+
+The site is a **React single-page app that is statically prerendered to HTML at build time**. This pairing is deliberate: it reads and navigates like a fast React app in the browser, but every route also ships as a real, fully-rendered HTML file. That keeps the pages crawlable for search engines, gives proper social-share previews, and lets deep links work directly on GitHub Pages — none of which a plain client-rendered SPA gets for free.
+
+- **React 19 + TypeScript** for the UI.
+- **Vite** for bundling and the dev server.
+- **vite-react-ssg** prerenders each route in the route table into static HTML, then hydrates it into an interactive app on the client.
+- **React Router** drives client-side navigation between the prerendered pages.
+- **Tailwind CSS v4 + DaisyUI** for styling and components, with the typography plugin handling the long-form `prose` content on project pages.
+- Images in `public/` are optimized at build time (sharp + svgo); a sitemap and a Pages-friendly `404.html` are emitted as a post-build step.
+- It ships automatically to **GitHub Pages** on every push to `main`, served from the custom domain configured via `public/CNAME`.
+
+## How it's organized
 
 ```text
-/
-├── public/                  # Static assets (images, PDFs, 3D viewers, ibom.html, CNAME, robots.txt)
-├── index.html               # HTML shell + no-flash theme init script
-├── scripts/
-│   └── postbuild.mjs        # Generates sitemap.xml and the GitHub Pages 404.html
-├── src/
-│   ├── main.tsx             # vite-react-ssg entry (builds router from routes.tsx)
-│   ├── routes.tsx           # Route table (one entry per page, all prerendered)
-│   ├── config.ts            # Site-wide metadata (title, description, URL)
-│   ├── components/          # BaseLayout, Sidebar, Header, Footer, cards, Carousel,
-│   │                        #   ProjectLayout, PdfViewerPage, ThemeToggle, Seo, SmartLink
-│   ├── pages/
-│   │   ├── Home.tsx
-│   │   ├── Projects.tsx
-│   │   ├── Cv.tsx
-│   │   ├── NotFound.tsx
-│   │   └── projects/        # One TSX component per project detail page
-│   └── styles/
-│       └── global.css       # Tailwind + DaisyUI + typography imports
-├── .github/workflows/deploy.yml   # GitHub Actions: build & deploy to GitHub Pages
-└── package.json
+public/             Static assets — images, PDFs, 3D viewers, favicon, CNAME, robots.txt
+index.html          The HTML shell, including a pre-paint theme script (no flash of wrong theme)
+src/
+  routes.tsx        The route table — the single source of truth for which pages exist
+  main.tsx          App entry; vite-react-ssg builds the router from routes.tsx
+  config.ts         Site-wide metadata (title, description, author, URL)
+  pages/            One component per page (Home, Projects, CV, 404, and each project)
+  components/        Shared building blocks (see below)
+  styles/global.css  Tailwind/DaisyUI imports plus a few custom rules
+scripts/            Build-time helpers (favicon generation, sitemap + 404 emission)
 ```
 
----
+The structure leans on a few shared pieces that most pages compose:
 
-## Pages
+- **`BaseLayout`** — the page shell: sidebar, mobile header, footer, theme handling, scroll-to-top on navigation, and the page-transition animation. The sidebar persists across navigations; only the main content animates and resets scroll.
+- **`ProjectLayout`** — the template for project write-ups. A page passes in metadata (title, hero image or image carousel, tags, badge, GitHub link, related documents) and its body content; the layout renders a consistent hero, prose area, and a "Project Documents" grid.
+- **`PdfViewerPage`** — a focused full-width layout for the inline PDF pages (posters, design files, applications).
+- Smaller components round it out: the cards on the listing pages, the CV timeline, the theme toggle, the image carousel, and a link helper that routes internal navigation through React Router while leaving external/file links as plain anchors.
 
-| Route | Description |
-| ----- | ----------- |
-| `/` | Home — bio, featured projects, experience |
-| `/projects` | Full projects listing |
-| `/projects/arm` | Arterial Line Placement Training Device |
-| `/projects/arm/application` | VentureWell application (PDF viewer) |
-| `/projects/clabsi` | CLABSI UV-C Disinfection Device |
-| `/projects/clabsi/dhf` | CLABSI Design History File (PDF viewer) |
-| `/projects/clabsi/poster` | CLABSI capstone poster (PDF viewer) |
-| `/projects/dog` | Dog Activity Tracker (TA/consulting role) |
-| `/projects/dog/posters` | Tabbed poster viewer for both Foundry teams |
-| `/projects/chip-tester` | BME 354 Multi-Chip IC Tester |
-| `/projects/ecg` | ECG Synthesizer |
-| `/projects/factory-scheduler` | Factory Scheduling & KPI Reporting API |
-| `/projects/pet-ct-sim` | PET/CT Brain Phantom Simulator |
-| `/cv` | CV / resume |
-| `/clabsi-ibom.html` | Interactive KiCad BOM (served as static HTML) |
+Project pages are authored as plain React components rather than a separate content format, so the same JSX, components, and type-checking apply everywhere on the site.
 
----
+## A note on history
 
-## Adding a Project
-
-1. Create `src/pages/projects/<Name>.tsx`. For a standard write-up, render the
-   `ProjectLayout` component and pass `title`, `description`, `heroImage`
-   (string or array → single image or auto-carousel), `badge`, `tags`,
-   `githubUrl`, and `docs`. Put the body content as children using normal JSX
-   (`<h2>`, `<p>`, `<table>`, …) — it's wrapped in `prose` styles automatically.
-   For a PDF-only page, render `PdfViewerPage` instead.
-2. Register the route in `src/routes.tsx`.
-3. Add the path to the `paths` array in `scripts/postbuild.mjs` so it lands in the sitemap.
-4. Add a `HorizontalCard` entry in `src/pages/Projects.tsx`.
-5. Drop any static assets (images, PDFs, 3D viewers) into `public/`.
-
----
-
-## Commands
-
-| Command | Action |
-| ------- | ------ |
-| `npm install` | Install dependencies |
-| `npm run dev` | Start the dev server |
-| `npm run build` | Prerender to `./dist/` and run the postbuild (sitemap + 404.html) |
-| `npm run preview` | Preview the production build locally |
-
----
-
-## Deployment
-
-The site deploys automatically to **GitHub Pages** on every push to `main` via
-[`.github/workflows/deploy.yml`](.github/workflows/deploy.yml), which builds the
-project and publishes `./dist/`. The custom domain `www.nicholastrigger.com` is
-configured via [`public/CNAME`](public/CNAME).
+This site began life as an Astro project and was rebuilt on the React + Vite stack described above, preserving the visual design and content while moving to a single React-based authoring model.
