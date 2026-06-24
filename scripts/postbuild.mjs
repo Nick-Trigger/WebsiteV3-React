@@ -26,6 +26,8 @@ const paths = [
   '/projects/ecg',
   '/projects/factory-scheduler',
   '/projects/pet-ct-sim',
+  '/projects/games',
+  '/projects/games/snake',
 ];
 
 const today = new Date().toISOString().slice(0, 10);
