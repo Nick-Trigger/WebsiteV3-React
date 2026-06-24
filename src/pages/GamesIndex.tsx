@@ -11,7 +11,7 @@ export default function GamesIndex() {
       <div className="text-3xl w-full font-bold mb-2">Browser Games</div>
       <p className="text-base-content/70 mb-5">
         A growing set of small games, each built as a self-contained React component. Pick one and
-        play right in your browser.
+        play in your browser.
       </p>
 
       {games.map((game, i) => (

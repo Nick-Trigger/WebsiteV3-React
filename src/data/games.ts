@@ -25,7 +25,7 @@ export const games: Game[] = [
     slug: 'snake',
     title: 'Snake',
     description:
-      'The classic arcade game — eat, grow, and try not to bite your own tail.',
+      'Its Snake, Eat Food... Get Longer!',
     tags: ['Arcade', 'Canvas'],
     instructions: [
       'Arrow keys or WASD to steer (on-screen pad on mobile)',

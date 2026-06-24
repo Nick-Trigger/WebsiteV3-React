@@ -165,51 +165,69 @@ export default function Snake() {
     setRunning(true);
   };
 
+  const KBDClass =
+    "kbd kbd-lg shadow-inner shadow-black/10 cursor-pointer select-none transition-transform transition-shadow transition-colors hover:shadow-md active:translate-y-[1px] active:shadow-sm active:bg-neutral-500";
+
   return (
-    <div className="flex flex-col items-center gap-4 w-full">
-      <div className="flex items-center gap-6 text-sm font-mono">
-        <span>
-          Score: <span className="text-primary font-bold">{score}</span>
-        </span>
-        <span>
-          Best: <span className="text-secondary font-bold">{best}</span>
-        </span>
-      </div>
-
-      <div className="relative w-full" style={{ maxWidth: SIZE }}>
-        <canvas
-          ref={canvasRef}
-          width={SIZE}
-          height={SIZE}
-          className="w-full rounded-xl border border-base-300 shadow-lg touch-none"
-          style={{ imageRendering: 'pixelated', aspectRatio: '1 / 1' }}
-        />
-        {(!running || gameOver) && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/50 rounded-xl text-white">
-            {gameOver && <p className="text-2xl font-bold">Game Over</p>}
-            <button className="btn btn-primary btn-sm" onClick={startOrRestart}>
-              {gameOver ? 'Play again' : 'Start'}
-            </button>
+    <div className="relative flex flex-col items-center gap-4 rounded-xl bg-orange-500 outline-none shadow-[inset_3px_3px_0_rgba(255,255,255,0.35),inset_-12px_-12px_0_rgba(0,0,0,0.45),0_10px_25px_rgba(0,0,0,0.5)]">
+      <div className="flex flex-col items-center gap-4 w-full p-8">
+        <div className="flex items-center gap-6 text-sm font-mono bg-orange-400 p-2 rounded-lg">
+          <span>
+            Score: <span className="text-primary font-bold">{score}</span>
+          </span>
+          <span>
+            Best: <span className="text-secondary font-bold">{best}</span>
+          </span>
+        </div>
+        <div className="relative w-full" style={{ maxWidth: SIZE }}>
+          <canvas
+            ref={canvasRef}
+            width={SIZE}
+            height={SIZE}
+            className="w-full rounded-xl border border-base-300 shadow-lg touch-none"
+            style={{ imageRendering: 'pixelated', aspectRatio: '1 / 1' }}
+          />
+          {(!running || gameOver) && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/50 rounded-xl text-white">
+              {gameOver && <p className="text-2xl font-bold">Game Over</p>}
+              <button className="btn btn-primary btn-sm" onClick={startOrRestart}>
+                {gameOver ? 'Play again' : 'Start'}
+              </button>
+            </div>
+          )}
+        </div>
+        {/* Keyboard controls (desktop only). */}
+        <div className="hidden sm:flex flex-col items-center gap-2 w-40 rounded-xl bg-orange-400 p-4">
+          <div className="grid grid-cols-3 gap-2">
+            {/* Row 1 */}
+            <span />
+            <kbd className={KBDClass} onClick={() => turn(0, -1)} aria-label="Up">↑/W</kbd>
+            <span />
+            {/* Row 2 */}
+            <kbd className={KBDClass} onClick={() => turn(-1, 0)} aria-label="Left">←/A</kbd>
+            <kbd className={KBDClass} onClick={() => turn(0, 1)} aria-label="Down">↓/S</kbd>
+            <kbd className={KBDClass} onClick={() => turn(1, 0)} aria-label="Right">→/D</kbd>
           </div>
-        )}
-      </div>
-
-      {/* Touch controls (mobile only). */}
-      <div className="grid grid-cols-3 gap-2 w-40 sm:hidden">
-        <span />
-        <button className="btn btn-sm" onClick={() => turn(0, -1)} aria-label="Up">
-          ▲
-        </button>
-        <span />
-        <button className="btn btn-sm" onClick={() => turn(-1, 0)} aria-label="Left">
-          ◀
-        </button>
-        <button className="btn btn-sm" onClick={() => turn(0, 1)} aria-label="Down">
-          ▼
-        </button>
-        <button className="btn btn-sm" onClick={() => turn(1, 0)} aria-label="Right">
-          ▶
-        </button>
+          <p className="text-xs text-center text-base-100">
+            Movement
+          </p>
+        </div>
+        
+        {/* Touch controls (mobile only). */}
+        <div className="grid grid-cols-3 grid-rows-3 gap-2 w-40 rounded-xl bg-orange-400 p-4 sm:hidden">
+          {/* Row 1 */}
+          <span />
+          <button className="btn btn-circle active:shadow-sm active:bg-neutral-500" onClick={() => turn(0, -1)} aria-label="Up">⮝</button>
+          <span />
+          {/* Row 2 */}
+          <button className="btn btn-circle active:shadow-sm active:bg-neutral-500" onClick={() => turn(-1, 0)} aria-label="Left">⮜</button>
+          <span />
+          <button className="btn btn-circle active:shadow-sm active:bg-neutral-500" onClick={() => turn(1, 0)} aria-label="Right">⮞</button>
+          {/* Row 3 */}
+          <span />
+          <button className="btn btn-circle active:shadow-sm active:bg-neutral-500" onClick={() => turn(0, 1)} aria-label="Down">⮟</button>
+          <span />
+        </div>
       </div>
     </div>
   );
