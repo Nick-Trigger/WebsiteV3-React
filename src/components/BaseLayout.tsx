@@ -20,13 +20,24 @@ export default function BaseLayout({
   includeSidebar = true,
   children,
 }: BaseLayoutProps) {
-  const { pathname } = useLocation();
+  const { pathname, hash } = useLocation();
 
-  // Close the mobile drawer after a client-side navigation.
   useEffect(() => {
+    // Close the mobile drawer after a client-side navigation.
     const drawer = document.getElementById('my-drawer') as HTMLInputElement | null;
     if (drawer) drawer.checked = false;
-  }, [pathname]);
+
+    // Scroll handling: jump to a #anchor when present (e.g. CV sections),
+    // otherwise reset to the top of the page on each navigation.
+    if (hash) {
+      const el = document.getElementById(decodeURIComponent(hash.slice(1)));
+      if (el) {
+        el.scrollIntoView();
+        return;
+      }
+    }
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [pathname, hash]);
 
   return (
     <>
@@ -36,7 +47,11 @@ export default function BaseLayout({
         <div className="drawer-content bg-base-100">
           <Header />
           <div className="md:flex md:justify-center">
-            <main className="p-6 pt-10 lg:max-w-[80%] max-w-[100vw]">{children}</main>
+            {/* key={pathname} replays the enter animation on each navigation;
+                the sidebar lives outside <main>, so it persists across routes. */}
+            <main key={pathname} className="page-enter p-6 pt-10 lg:max-w-[80%] max-w-[100vw]">
+              {children}
+            </main>
           </div>
           <Footer />
         </div>

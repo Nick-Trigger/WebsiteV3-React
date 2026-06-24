@@ -1,5 +1,5 @@
 import { Head } from 'vite-react-ssg';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../config';
+import { SITE_TITLE, SITE_DESCRIPTION, SITE_AUTHOR } from '../config';
 
 interface SeoProps {
   title?: string;
@@ -21,6 +21,7 @@ export default function Seo({
       <title>{title}</title>
       <meta name="title" content={title} />
       <meta name="description" content={description} />
+      <meta name="author" content={SITE_AUTHOR} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={image} />

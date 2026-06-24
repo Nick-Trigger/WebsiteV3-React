@@ -20,7 +20,7 @@ export default function SidebarMenu() {
   const onCv = /^\/cv/.test(pathname);
 
   return (
-    <ul className="menu grow shrink menu-md overflow-y-auto flex flex-col items-start w-full items-stretch">
+    <ul className="menu grow shrink menu-md overflow-y-auto no-scrollbar flex flex-col items-start w-full items-stretch">
       <li>
         <Link className={active(pathname === '/')} to="/">
           Home

@@ -4,7 +4,7 @@ import SidebarFooter from './SidebarFooter';
 
 export default function Sidebar() {
   return (
-    <div className="drawer-side z-40">
+    <div className="drawer-side z-40 no-scrollbar">
       <label htmlFor="my-drawer" className="drawer-overlay" aria-label="Close menu"></label>
       <aside className="px-2 pt-2 h-auto min-h-full w-[19rem] bg-base-200 text-base-content flex flex-col">
         <div className="w-fit mx-auto mt-5 mb-6">
