@@ -90,7 +90,7 @@ export default function Projects() {
         title="This Website"
         img="/favicon.svg"
         desc="This one. It is built with React, Vite, and Tailwind CSS, statically prerendered for GitHub Pages."
-        url="https://github.com/Nick-Trigger/website2"
+        url="https://github.com/Nick-Trigger/Websites"
         target="_blank"
       />
     </BaseLayout>
