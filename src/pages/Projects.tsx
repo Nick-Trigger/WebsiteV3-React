@@ -9,6 +9,14 @@ export default function Projects() {
       </div>
 
       <HorizontalCard
+        title="Browser Games"
+        img="/favicon.svg"
+        desc="A small collection of playable browser games built as self-contained React components."
+        url="/projects/games"
+        badge="Interactive"
+      />
+
+      <HorizontalCard
         title="Pulse Mate - Radial Arterial Line Placement Training Device"
         img="/PulseMateLogo-01.svg"
         desc="Easy to use and durable, this training device is designed with students and medical professionals in mind. (VentureWell Summer 2023 Cohort)(Patent Pending)"
