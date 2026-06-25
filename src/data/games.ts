@@ -1,6 +1,7 @@
 import type { ComponentType } from 'react';
 import Snake from '../games/Snake';
 import Game2048 from '../games/Game2048';
+import TowerDefense from '../games/TowerDefense';
 
 export interface Game {
   /** URL slug; the route is /projects/games/<slug>. */
@@ -27,7 +28,7 @@ export const games: Game[] = [
     title: 'Snake',
     description:
       'Its Snake, Eat Food... Get Longer!',
-    tags: ['Arcade', 'Canvas'],
+    tags: ['NEW'],
     instructions: [
       'Arrow keys or WASD to steer (on-screen pad on mobile)',
       'Eat the red food to grow and score a point',
@@ -39,12 +40,24 @@ export const games: Game[] = [
     slug: '2048',
     title: '2048',
     description: 'Slide the tiles, merge matching numbers, and reach 2048.',
-    tags: ['Puzzle'],
+    tags: ['NEW'],
     instructions: [
       'Arrow keys / WASD or the D-pad to slide every tile',
       'Tiles with the same number merge into one',
       'Reach the 2048 tile to win — press R for a new game',
     ],
     Component: Game2048,
+  },
+  {
+    slug: 'tower-defense',
+    title: 'Tower Defense',
+    description: 'Defend your base from waves of enemies.',
+    tags: ['NEW'],
+    instructions: [
+      'Place towers to stop the enemies from reaching the end',
+      'Choose the right tower for each situation',
+      'Upgrade your towers to make them more powerful',
+    ],
+    Component: TowerDefense,
   },
 ];

@@ -5,7 +5,7 @@ export default function FactoryScheduler() {
     <ProjectLayout
       title="Factory Scheduling & KPI Reporting API"
       description="A constraint-based production scheduling service. It accepts a job-shop scheduling problem as JSON, returns a feasible schedule that minimizes total tardiness, and reports KPIs. A React frontend renders the result as an interactive Gantt chart."
-      heroImage={['/favicon.svg']}
+      heroImage={['/schedule_factory.png']}
       badge="Full-Stack"
       tags={['Python', 'FastAPI', 'OR-Tools CP-SAT', 'React', 'TypeScript', 'Vite']}
       githubUrl="https://github.com/Nick-Trigger/Factory-Scheduling-and-KPI-Reporting-API-with-Frontend"
