@@ -1,23 +1,46 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import GamePlayer from '../components/GamePlayer';
+import DPad from '../components/DPad';
 
 const CELLS = 20; // grid is CELLS x CELLS
 const CELL = 20; // px per cell (internal canvas resolution)
 const SIZE = CELLS * CELL; // 400 x 400 internal; scaled to container via CSS
-const SPEED = 110; // ms per tick
+const SPEED = 120; // ms per tick
+const FOOD_COUNT = 6; // how many food items are on the board at once
 const BEST_KEY = 'snake-best';
+const PFP_SRC = '/pfp.jpg';
 
 type Pt = { x: number; y: number };
 const eq = (a: Pt, b: Pt) => a.x === b.x && a.y === b.y;
 
+// A cell that collides with nothing in `occupied`.
+const spawnFood = (occupied: Pt[]): Pt => {
+  let f: Pt;
+  do {
+    f = { x: Math.floor(Math.random() * CELLS), y: Math.floor(Math.random() * CELLS) };
+  } while (occupied.some((o) => eq(o, f)));
+  return f;
+};
+
+// FOOD_COUNT distinct cells, none on the snake and none on each other.
+const spawnFoods = (body: Pt[]): Pt[] => {
+  const foods: Pt[] = [];
+  while (foods.length < FOOD_COUNT) {
+    foods.push(spawnFood([...body, ...foods]));
+  }
+  return foods;
+};
+
 export default function Snake() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const pfp = useRef<HTMLImageElement | null>(null);
 
   // Mutable game state lives in refs so the interval reads fresh values
   // without re-subscribing on every render.
   const snake = useRef<Pt[]>([]);
   const dir = useRef<Pt>({ x: 1, y: 0 });
   const nextDir = useRef<Pt>({ x: 1, y: 0 });
-  const food = useRef<Pt>({ x: 15, y: 10 });
+  const foods = useRef<Pt[]>([]);
   const scoreRef = useRef(0);
   const bestRef = useRef(0);
 
@@ -27,12 +50,35 @@ export default function Snake() {
   const [running, setRunning] = useState(false);
   const [gameOver, setGameOver] = useState(false);
 
-  const spawnFood = (body: Pt[]): Pt => {
-    let f: Pt;
-    do {
-      f = { x: Math.floor(Math.random() * CELLS), y: Math.floor(Math.random() * CELLS) };
-    } while (body.some((s) => eq(s, f)));
-    return f;
+  // Draw one food cell as a circular headshot (falls back to a dot pre-load).
+  const drawFood = (ctx: CanvasRenderingContext2D, cell: Pt) => {
+    const cx = cell.x * CELL + CELL / 2;
+    const cy = cell.y * CELL + CELL / 2;
+    const r = CELL / 2 - 1;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.closePath();
+    ctx.clip();
+
+    const img = pfp.current;
+    if (img && img.complete && img.naturalWidth) {
+      const side = Math.min(img.naturalWidth, img.naturalHeight); // center-crop to square
+      const sx = (img.naturalWidth - side) / 2;
+      const sy = (img.naturalHeight - side) / 2;
+      ctx.drawImage(img, sx, sy, side, side, cx - r, cy - r, r * 2, r * 2);
+    } else {
+      ctx.fillStyle = '#ef4444';
+      ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
+    }
+    ctx.restore();
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+    ctx.stroke();
   };
 
   const draw = useCallback(() => {
@@ -56,9 +102,7 @@ export default function Snake() {
       ctx.stroke();
     }
 
-    const f = food.current;
-    ctx.fillStyle = '#ef4444';
-    ctx.fillRect(f.x * CELL + 2, f.y * CELL + 2, CELL - 4, CELL - 4);
+    foods.current.forEach((f) => drawFood(ctx, f));
 
     snake.current.forEach((s, i) => {
       ctx.fillStyle = i === 0 ? '#4ade80' : '#22c55e';
@@ -74,7 +118,7 @@ export default function Snake() {
     ];
     dir.current = { x: 1, y: 0 };
     nextDir.current = { x: 1, y: 0 };
-    food.current = spawnFood(snake.current);
+    foods.current = spawnFoods(snake.current);
     scoreRef.current = 0;
     setScore(0);
     setGameOver(false);
@@ -111,17 +155,30 @@ export default function Snake() {
       return;
     }
 
-    const ate = eq(nh, food.current);
+    const eaten = foods.current.findIndex((f) => eq(f, nh));
+    const ate = eaten !== -1;
     const next = [nh, ...snake.current];
     if (ate) {
       scoreRef.current += 1;
       setScore(scoreRef.current);
-      food.current = spawnFood(next);
+      // Replace just the eaten item, keeping the board topped up.
+      const others = foods.current.filter((_, i) => i !== eaten);
+      foods.current = [...others, spawnFood([...next, ...others])];
     } else {
       next.pop();
     }
     snake.current = next;
     draw();
+  }, [draw]);
+
+  // Load the headshot once; redraw when it's ready.
+  useEffect(() => {
+    const img = new Image();
+    img.onload = () => {
+      pfp.current = img;
+      draw();
+    };
+    img.src = PFP_SRC;
   }, [draw]);
 
   // Load best score and paint the initial idle board on mount.
@@ -165,70 +222,36 @@ export default function Snake() {
     setRunning(true);
   };
 
-  const KBDClass =
-    "kbd kbd-lg shadow-inner shadow-black/10 cursor-pointer select-none transition-transform transition-shadow transition-colors hover:shadow-md active:translate-y-[1px] active:shadow-sm active:bg-neutral-500";
-
   return (
-    <div className="relative flex flex-col items-center gap-4 rounded-xl bg-orange-500 outline-none shadow-[inset_3px_3px_0_rgba(255,255,255,0.35),inset_-12px_-12px_0_rgba(0,0,0,0.45),0_10px_25px_rgba(0,0,0,0.5)]">
-      <div className="flex flex-col items-center gap-4 w-full p-8">
-        <div className="flex items-center gap-6 text-sm font-mono bg-orange-400 p-2 rounded-lg">
-          <span>
-            Score: <span className="text-primary font-bold">{score}</span>
-          </span>
-          <span>
-            Best: <span className="text-secondary font-bold">{best}</span>
-          </span>
+    <GamePlayer
+      stats={[
+        { label: 'Score', value: score, valueClassName: 'text-primary' },
+        { label: 'Best', value: best, valueClassName: 'text-secondary' },
+      ]}
+      controls={
+        <DPad
+          onUp={() => turn(0, -1)}
+          onDown={() => turn(0, 1)}
+          onLeft={() => turn(-1, 0)}
+          onRight={() => turn(1, 0)}
+        />
+      }
+    >
+      <canvas
+        ref={canvasRef}
+        width={SIZE}
+        height={SIZE}
+        className="w-full rounded-xl border border-base-300 shadow-lg touch-none"
+        style={{ imageRendering: 'pixelated', aspectRatio: '1 / 1' }}
+      />
+      {(!running || gameOver) && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/50 rounded-xl text-white">
+          {gameOver && <p className="text-2xl font-bold">Game Over</p>}
+          <button className="btn btn-primary btn-sm" onClick={startOrRestart}>
+            {gameOver ? 'Play again' : 'Start'}
+          </button>
         </div>
-        <div className="relative w-full" style={{ maxWidth: SIZE }}>
-          <canvas
-            ref={canvasRef}
-            width={SIZE}
-            height={SIZE}
-            className="w-full rounded-xl border border-base-300 shadow-lg touch-none"
-            style={{ imageRendering: 'pixelated', aspectRatio: '1 / 1' }}
-          />
-          {(!running || gameOver) && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/50 rounded-xl text-white">
-              {gameOver && <p className="text-2xl font-bold">Game Over</p>}
-              <button className="btn btn-primary btn-sm" onClick={startOrRestart}>
-                {gameOver ? 'Play again' : 'Start'}
-              </button>
-            </div>
-          )}
-        </div>
-        {/* Keyboard controls (desktop only). */}
-        <div className="hidden sm:flex flex-col items-center gap-2 w-40 rounded-xl bg-orange-400 p-4">
-          <div className="grid grid-cols-3 gap-2">
-            {/* Row 1 */}
-            <span />
-            <kbd className={KBDClass} onClick={() => turn(0, -1)} aria-label="Up">↑/W</kbd>
-            <span />
-            {/* Row 2 */}
-            <kbd className={KBDClass} onClick={() => turn(-1, 0)} aria-label="Left">←/A</kbd>
-            <kbd className={KBDClass} onClick={() => turn(0, 1)} aria-label="Down">↓/S</kbd>
-            <kbd className={KBDClass} onClick={() => turn(1, 0)} aria-label="Right">→/D</kbd>
-          </div>
-          <p className="text-xs text-center text-base-100">
-            Movement
-          </p>
-        </div>
-        
-        {/* Touch controls (mobile only). */}
-        <div className="grid grid-cols-3 grid-rows-3 gap-2 w-40 rounded-xl bg-orange-400 p-4 sm:hidden">
-          {/* Row 1 */}
-          <span />
-          <button className="btn btn-circle active:shadow-sm active:bg-neutral-500" onClick={() => turn(0, -1)} aria-label="Up">⮝</button>
-          <span />
-          {/* Row 2 */}
-          <button className="btn btn-circle active:shadow-sm active:bg-neutral-500" onClick={() => turn(-1, 0)} aria-label="Left">⮜</button>
-          <span />
-          <button className="btn btn-circle active:shadow-sm active:bg-neutral-500" onClick={() => turn(1, 0)} aria-label="Right">⮞</button>
-          {/* Row 3 */}
-          <span />
-          <button className="btn btn-circle active:shadow-sm active:bg-neutral-500" onClick={() => turn(0, 1)} aria-label="Down">⮟</button>
-          <span />
-        </div>
-      </div>
-    </div>
+      )}
+    </GamePlayer>
   );
 }

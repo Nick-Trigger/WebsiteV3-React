@@ -6,12 +6,11 @@ export default function GamesIndex() {
   return (
     <BaseLayout
       title="Nicholas Trigger - Games"
-      description="A small collection of browser games built as React components."
+      description="A collection of browser games built as React components."
     >
       <div className="text-3xl w-full font-bold mb-2">Browser Games</div>
       <p className="text-base-content/70 mb-5">
-        A growing set of small games, each built as a self-contained React component. Pick one and
-        play in your browser.
+        Playable browser games built as self-contained React components.
       </p>
 
       {games.map((game, i) => (

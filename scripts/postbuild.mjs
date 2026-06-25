@@ -28,6 +28,7 @@ const paths = [
   '/projects/pet-ct-sim',
   '/projects/games',
   '/projects/games/snake',
+  '/projects/games/2048',
 ];
 
 const today = new Date().toISOString().slice(0, 10);
@@ -68,3 +69,4 @@ try {
 } catch {
   // robots.txt is in public/ and copied by Vite; ignore if missing.
 }
+  

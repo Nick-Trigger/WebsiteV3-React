@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react';
 import Snake from '../games/Snake';
+import Game2048 from '../games/Game2048';
 
 export interface Game {
   /** URL slug; the route is /projects/games/<slug>. */
@@ -33,5 +34,17 @@ export const games: Game[] = [
       'Avoid the walls and your own tail',
     ],
     Component: Snake,
+  },
+  {
+    slug: '2048',
+    title: '2048',
+    description: 'Slide the tiles, merge matching numbers, and reach 2048.',
+    tags: ['Puzzle'],
+    instructions: [
+      'Arrow keys / WASD or the D-pad to slide every tile',
+      'Tiles with the same number merge into one',
+      'Reach the 2048 tile to win — press R for a new game',
+    ],
+    Component: Game2048,
   },
 ];

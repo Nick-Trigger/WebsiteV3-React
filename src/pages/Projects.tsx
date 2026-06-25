@@ -11,7 +11,7 @@ export default function Projects() {
       <HorizontalCard
         title="Browser Games"
         img="/favicon.svg"
-        desc="A small collection of playable browser games built as self-contained React components."
+        desc="Playable browser games built as self-contained React components."
         url="/projects/games"
         badge="Interactive"
       />
