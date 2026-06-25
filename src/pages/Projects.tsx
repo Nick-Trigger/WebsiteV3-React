@@ -46,14 +46,6 @@ export default function Projects() {
 
       <div className="divider my-0"></div>
 
-      <HorizontalCard
-        title="Dog Activity Trackers"
-        img="/savinggrace.jpg"
-        desc="Consulting TA for two Duke EGR 101 Foundry teams building wearable GPS and accelerometer trackers for foster dogs at Saving Grace Animal Shelter."
-        url="/projects/dog"
-        badge="Consulting / TA"
-      />
-
       <div>
         <div className="text-3xl w-full font-bold mb-5 mt-10">All Projects</div>
       </div>
@@ -88,6 +80,14 @@ export default function Projects() {
         desc="A physics-based PET/CT brain phantom simulator implementing phantom generation, CT simulation, and PET simulation pipelines. Built with Python and Jupyter Notebook for medical imaging education and research."
         url="/projects/pet-ct-sim"
         badge="Medical Imaging"
+      />
+      <div className="divider my-0"></div>
+      <HorizontalCard
+        title="Dog Activity Trackers"
+        img="/savinggrace.jpg"
+        desc="Consulting TA for two Duke EGR 101 Foundry teams building wearable GPS and accelerometer trackers for foster dogs at Saving Grace Animal Shelter."
+        url="/projects/dog"
+        badge="Consulting / TA"
       />
       <div className="divider my-0"></div>
       <HorizontalCard
