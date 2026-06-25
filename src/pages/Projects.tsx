@@ -60,7 +60,7 @@ export default function Projects() {
 
       <HorizontalCard
         title="Factory Scheduling & KPI Reporting API"
-        img="/favicon.svg"
+        img="/schedule_factory.png"
         desc="A constraint-based production scheduling service built on OR-Tools CP-SAT. Accepts a job-shop problem as JSON, returns a tardiness-minimizing schedule with KPIs, and visualizes it via a React + TypeScript Gantt frontend. FastAPI backend with a pluggable adapter/objective/constraint architecture."
         url="/projects/factory-scheduler"
         badge="Full-Stack"
