@@ -1,20 +1,31 @@
 import BaseLayout from '../components/BaseLayout';
 import HorizontalCard from '../components/HorizontalCard';
+import { games } from '../data/games';
+import GameThumbnail from '../components/GameThumbnail';
 
 export default function Projects() {
+  // pick one random game from the first three
+  const candidates = games;
+  const randomGame = candidates.length
+    ? candidates[Math.floor(Math.random() * candidates.length)]
+    : null;
+
   return (
     <BaseLayout title="Nicholas Trigger - Projects">
       <div>
         <div className="text-3xl w-full font-bold mb-5">Recent Projects</div>
       </div>
 
-      <HorizontalCard
-        title="Browser Games"
-        img="/favicon.svg"
-        desc="Playable browser games built as self-contained React components."
-        url="/projects/games"
-        badge="Interactive"
-      />
+      {randomGame && (
+        <HorizontalCard
+          key={randomGame.slug}
+          title="Browser Games"
+          media={<GameThumbnail slug={randomGame.slug} />}
+          desc="Playable browser games built as self-contained React components."
+          url="/projects/games"
+          badge="Interactive"
+        />
+      )}
 
       <HorizontalCard
         title="Pulse Mate - Radial Arterial Line Placement Training Device"

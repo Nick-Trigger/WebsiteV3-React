@@ -1,4 +1,5 @@
 import SmartLink from './SmartLink';
+import type { ReactNode } from 'react';
 
 interface HorizontalCardProps {
   title: string;
@@ -13,6 +14,7 @@ interface HorizontalCardProps {
 export default function HorizontalCard({
   title,
   img,
+  media,
   desc,
   url,
   badge,
@@ -25,14 +27,20 @@ export default function HorizontalCard({
     <div className="rounded-lg bg-base-100 hover:shadow-xl transition ease-in-out hover:scale-[102%]">
       <SmartLink to={url} target={target}>
         <div className="hero-content flex-col md:flex-row">
-          {img && (
-            <img
-              src={img}
-              width={750}
-              height={422}
-              alt={title}
-              className="object-scale-down md:max-w-[13rem] md:min-w-[13rem] md:max-h-[9rem] rounded-lg bg-neutral-content"
-            />
+          {media ? (
+            <div className="w-full md:max-w-[13rem] md:min-w-[13rem] aspect-[13/9] rounded-lg overflow-hidden bg-neutral-content">
+              {media}
+            </div>
+          ) : (
+            img && (
+              <img
+                src={img}
+                width={750}
+                height={422}
+                alt={title}
+                className="object-scale-down md:max-w-[13rem] md:min-w-[13rem] md:max-h-[9rem] rounded-lg bg-neutral-content"
+              />
+            )
           )}
           <div className="grow w-full">
             <h1 className="text-xl font-bold">

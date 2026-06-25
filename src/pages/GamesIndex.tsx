@@ -1,6 +1,7 @@
 import BaseLayout from '../components/BaseLayout';
 import HorizontalCard from '../components/HorizontalCard';
 import { games } from '../data/games';
+import GameThumbnail from '../components/GameThumbnail';
 
 export default function GamesIndex() {
   return (
@@ -21,6 +22,7 @@ export default function GamesIndex() {
             desc={game.description}
             url={`/projects/games/${game.slug}`}
             badge={game.tags?.[0]}
+            media={<GameThumbnail slug={game.slug} />}
           />
         </div>
       ))}
