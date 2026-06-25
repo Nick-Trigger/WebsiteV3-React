@@ -244,11 +244,11 @@ export default function Breakout() {
       screenMaxWidth={W}
       controls={
         <div className="flex gap-3">
-          <button type="button" className="btn btn-circle" aria-label="Left" {...hold(-1)}>
-            ◀
+          <button type="button" className="btn btn-circle btn-xl" aria-label="Left" {...hold(-1)}>
+            &larr;
           </button>
-          <button type="button" className="btn btn-circle" aria-label="Right" {...hold(1)}>
-            ▶
+          <button type="button" className="btn btn-circle btn-xl" aria-label="Right" {...hold(1)}>
+            &rarr;
           </button>
         </div>
       }

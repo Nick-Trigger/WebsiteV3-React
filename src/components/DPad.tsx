@@ -1,6 +1,6 @@
 const KBD_CLASS =
   'kbd kbd-lg shadow-inner shadow-black/10 cursor-pointer select-none transition-transform transition-shadow transition-colors hover:shadow-md active:translate-y-[1px] active:shadow-sm active:bg-neutral-500';
-const BTN_CLASS = 'btn btn-circle active:shadow-sm active:bg-neutral-500';
+const BTN_CLASS = 'btn btn-circle btn-xl active:shadow-sm active:bg-neutral-500';
 
 export interface DPadProps {
   onUp: () => void;
@@ -46,24 +46,26 @@ export default function DPad({ onUp, onDown, onLeft, onRight, labels, caption = 
       </div>
 
       {/* Touch cluster (mobile). */}
-      <div className="grid grid-cols-3 grid-rows-3 gap-2 w-40 rounded-xl bg-orange-400 p-4 sm:hidden">
-        <span />
-        <button type="button" className={BTN_CLASS} onClick={onUp} aria-label="Up">
-          ⮝
-        </button>
-        <span />
-        <button type="button" className={BTN_CLASS} onClick={onLeft} aria-label="Left">
-          ⮜
-        </button>
-        <span />
-        <button type="button" className={BTN_CLASS} onClick={onRight} aria-label="Right">
-          ⮞
-        </button>
-        <span />
-        <button type="button" className={BTN_CLASS} onClick={onDown} aria-label="Down">
-          ⮟
-        </button>
-        <span />
+      <div className="w-full rounded-xl bg-orange-400 p-4 sm:hidden flex justify-center">
+        <div className="grid grid-cols-3 grid-rows-3 gap-2 w-40">
+          <span />
+          <button type="button" className={BTN_CLASS} onClick={onUp} aria-label="Up">
+            &uarr;
+          </button>
+          <span />
+          <button type="button" className={BTN_CLASS} onClick={onLeft} aria-label="Left">
+            &larr;
+          </button>
+          <span />
+          <button type="button" className={BTN_CLASS} onClick={onRight} aria-label="Right">
+            &rarr;
+          </button>
+          <span />
+          <button type="button" className={BTN_CLASS} onClick={onDown} aria-label="Down">
+            &darr;
+          </button>
+          <span />
+        </div>
       </div>
     </>
   );

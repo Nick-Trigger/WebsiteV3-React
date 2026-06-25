@@ -49,7 +49,8 @@ export const games: Game[] = [
     instructions: [
       'Arrow keys / WASD or the D-pad to slide every tile',
       'Tiles with the same number merge into one',
-      'Reach the 2048 tile to win — press R for a new game',
+      'Reach the 2048 tile to win',
+      'Press R to restart the game at any time',
     ],
     Component: Game2048,
   },
@@ -95,8 +96,7 @@ export const games: Game[] = [
     description: 'A classic two-player game of ping-pong.',
     tags: ['NEW', 'Arcade'],
     instructions: [
-      'Player 1 uses W and S keys to move their paddle up and down',
-      'Player 2 uses UP and DOWN arrow keys to move their paddle up and down',
+      'Use W and S keys to move the paddle up and down or arrow keys on mobile',
       'First player to score 11 points wins!',
     ],
     Component: Pong,
@@ -108,7 +108,7 @@ export const games: Game[] = [
     tags: ['NEW', 'Puzzle'],
     instructions: [
       'Click on a tile adjacent to the empty space to move it',
-      'Try to arrange all tiles in numerical order (or a specific image)',
+      'Try to arrange all tiles in numerical order',
       'The fewer moves you make, the better your score!',
     ],
     Component: SlidingPuzzle,
@@ -125,5 +125,4 @@ export const games: Game[] = [
     ],
     Component: WhackAMole,
   },
-
 ];
