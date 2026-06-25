@@ -29,7 +29,12 @@ const paths = [
   '/projects/games',
   '/projects/games/snake',
   '/projects/games/2048',
-  '/projects/games/tower-defense'
+  '/projects/games/tower-defense',
+  '/projects/games/flappy',
+  '/projects/games/breakout',
+  '/projects/games/pong',
+  '/projects/games/sliding-puzzle',
+  '/projects/games/whack-a-mole'
 ];
 
 const today = new Date().toISOString().slice(0, 10);
