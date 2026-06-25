@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 interface HorizontalCardProps {
   title: string;
   img?: string;
+  media?: React.ReactNode;
   desc: string;
   url: string;
   badge?: string;
