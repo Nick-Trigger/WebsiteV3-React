@@ -6,6 +6,7 @@ const cvSections = [
   ['engineering-experience', 'Engineering Experience'],
   ['research-experience', 'Research Experience'],
   ['patents', 'Patents'],
+  ['projects', 'Projects'],
   ['leadership', 'Leadership'],
   ['certifications', 'Certifications'],
   ['skills', 'Skills'],

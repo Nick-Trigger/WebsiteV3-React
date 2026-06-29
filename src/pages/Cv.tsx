@@ -95,7 +95,7 @@ export default function Cv() {
       <div className="time-line-container mb-10">
         <TimeLine
           title="R&D Research Engineer"
-          subtitle="December 2025 to Present at Reselute Medical · Durham, NC"
+          subtitle="December 2025 to May 2026 at Reselute Medical · Durham, NC"
         >
           <ul className="list-disc mx-6 mb-6 grid gap-0.5 text-sm">
             <li>
@@ -152,7 +152,7 @@ export default function Cv() {
         </TimeLine>
         <TimeLine
           title="Engineering Design & Communication TA"
-          subtitle="August 2023 to January 2024 at Duke University · Durham, NC"
+          subtitle="August 2023 to June 2024 at Duke University · Durham, NC"
         >
           <ul className="list-disc mx-6 mb-6 grid gap-0.5 text-sm">
             <li>
@@ -166,7 +166,7 @@ export default function Cv() {
         </TimeLine>
         <TimeLine
           title="Engineering Services Intern"
-          subtitle="June 2023 to August 2023 at City of Corpus Christi Large Projects Division · Corpus Christi, TX"
+          subtitle="July 2023 to August 2024 at City of Corpus Christi Large Projects Division · Corpus Christi, TX"
         >
           <ul className="list-disc mx-6 mb-6 grid gap-0.5 text-sm">
             <li>
@@ -194,7 +194,7 @@ export default function Cv() {
       <div className="time-line-container mb-10">
         <TimeLine
           title="Clinical Research Associate"
-          subtitle="June 2023 to August 2023 at CHRISTUS Spohn Health System · Corpus Christi, TX"
+          subtitle="June 2023 to August 2024 at CHRISTUS Spohn Health System · Corpus Christi, TX"
         >
           <ul className="list-disc mx-6 mb-6 grid gap-0.5 text-sm">
             <li>
@@ -233,6 +233,141 @@ export default function Cv() {
           63/463,432 · Filed May 2, 2023
         </li>
       </ul>
+
+      <div className="mb-5">
+        <div id="projects" className="text-3xl w-full font-bold">
+          Projects
+        </div>
+      </div>
+
+      <div className="time-line-container mb-10">
+        <TimeLine
+          title="CLAB-Free · CLABSI Prevention Device"
+          subtitle="Duke BME Senior Capstone"
+          separator="·"
+          buttonLink="../projects/clabsi"
+        >
+          <ul className="list-disc mx-6 mb-6 grid gap-0.5 text-sm">
+            <li>
+              Developed a handheld UV-C disinfection device for central-line hubs, targeting the
+              ~40,000 annual CLABSIs and removing dependence on nurse compliance with the
+              Scrub-the-Hub protocol.
+            </li>
+            <li>
+              Engineered three custom KiCad PCBs and an SLA 3D-printed enclosure, validating a
+              4-log CFU reduction and 2.49 mW optical output in the 263–273 nm germicidal window.
+            </li>
+          </ul>
+        </TimeLine>
+        <TimeLine
+          title="Stimulus-Responsive ECG Synthesizer"
+          buttonLink="../projects/ecg"
+        >
+          <ul className="list-disc mx-6 mb-6 grid gap-0.5 text-sm">
+            <li>
+              Designed and built an ESP32 ECG synthesizer (C++/FreeRTOS) with a custom
+              differential analog output stage targeting standard limb-lead outputs.
+            </li>
+            <li>
+              Enabled repeatable bench validation of ECG acquisition hardware and signal-processing
+              algorithms.
+            </li>
+          </ul>
+        </TimeLine>
+        <TimeLine
+          title="Radial Arterial Line Placement Training Device"
+          subtitle="VentureWell Summer 2023 Cohort"
+          separator="·"
+          buttonLink="../projects/arm"
+        >
+          <ul className="list-disc mx-6 mb-6 grid gap-0.5 text-sm">
+            <li>
+              Co-developed a durable arterial line placement training device for students and
+              clinicians, selected for the VentureWell Summer 2023 cohort and filed as patent
+              pending.
+            </li>
+          </ul>
+        </TimeLine>
+        <TimeLine
+          title="Factory Scheduling & KPI Reporting API"
+          buttonLink="../projects/factory-scheduler"
+        >
+          <ul className="list-disc mx-6 mb-6 grid gap-0.5 text-sm">
+            <li>
+              Built a constraint-based production scheduling service on OR-Tools CP-SAT that accepts
+              job-shop problems as JSON and returns tardiness-minimizing schedules with KPIs.
+            </li>
+            <li>
+              Architected a FastAPI backend with pluggable adapter, objective, and constraint
+              systems, paired with a React + TypeScript Gantt frontend.
+            </li>
+          </ul>
+        </TimeLine>
+        <TimeLine
+          title="PET/CT Brain Phantom Simulator"
+          buttonLink="../projects/pet-ct-sim"
+        >
+          <ul className="list-disc mx-6 mb-6 grid gap-0.5 text-sm">
+            <li>
+              Built a physics-based PET/CT brain phantom simulator in Python and Jupyter,
+              implementing phantom generation, CT simulation, and PET simulation pipelines for
+              medical imaging education.
+            </li>
+          </ul>
+        </TimeLine>
+        <TimeLine
+          title="BME 354 Multi-Chip IC Tester"
+          buttonLink="../projects/chip-tester"
+        >
+          <ul className="list-disc mx-6 mb-6 grid gap-0.5 text-sm">
+            <li>
+              Designed a custom KiCad PCB to validate multiple integrated circuits for Duke BME 354
+              coursework.
+            </li>
+          </ul>
+        </TimeLine>
+        <TimeLine
+          title="Dog Activity Trackers"
+          subtitle="Duke EGR 101 Consulting TA"
+          separator="·"
+          buttonLink="../projects/dog"
+        >
+          <ul className="list-disc mx-6 mb-6 grid gap-0.5 text-sm">
+            <li>
+              Served as consulting TA for two Duke EGR 101 Foundry teams building wearable GPS and
+              accelerometer trackers for foster dogs at Saving Grace Animal Shelter.
+            </li>
+            <li>
+              Guided students through sensor selection, prototyping, and iteration on a real-world
+              wearable.
+            </li>
+          </ul>
+        </TimeLine>
+        <TimeLine
+          title="Browser Games"
+          buttonLink="../projects/games"
+        >
+          <ul className="list-disc mx-6 mb-6 grid gap-0.5 text-sm">
+            <li>
+              Built a collection of eight self-contained browser games (Snake, 2048, Tower Defense,
+              Flappy Bird, and more) in React and TypeScript using a registry-driven architecture
+              and a reusable game-player component.
+            </li>
+          </ul>
+        </TimeLine>
+        <TimeLine
+          title="NicholasTrigger.com Portfolio Website"
+          buttonLink="../projects/portfolio"
+        >
+          <ul className="list-disc mx-6 grid gap-0.5 text-sm">
+            <li>
+              Built a personal portfolio site in React, Vite, and Tailwind CSS, statically
+              prerendered for GitHub Pages, with an interactive games section and site-wide custom
+              features.
+            </li>
+          </ul>
+        </TimeLine>
+      </div>
 
       <div className="mb-5">
         <div id="leadership" className="text-3xl w-full font-bold">
@@ -301,6 +436,27 @@ export default function Cv() {
             </li>
           </ul>
         </TimeLine>
+        <TimeLine
+          title="Founder, Event Manager & Team Lead · RunCorpusChristi"
+          subtitle="August 2020 to July 2022 · Corpus Christi, TX"
+        >
+          <ul className="list-disc mx-6 grid gap-0.5 text-sm">
+            <li>Organized charity running events across Corpus Christi, TX.</li>
+            <li>
+              Raised over $10,000 for the Ronald McDonald House and Driscoll Children's Hospital.
+            </li>
+          </ul>
+        </TimeLine>
+        <TimeLine
+          title="Fish & Herpetology Volunteer · Texas State Aquarium"
+          subtitle="May 2017 to April 2020 · Corpus Christi, TX"
+        >
+          <ul className="list-disc mx-6 grid gap-0.5 text-sm">
+            <li>Provided animal care through maintenance, enrichment, and feeding.</li>
+            <li>Educated guests on animals and environmental threats to wildlife.</li>
+            <li>Received the President's Gold Award for Volunteer Service.</li>
+          </ul>
+        </TimeLine>
       </div>
 
       <div className="mb-5">
@@ -342,12 +498,16 @@ export default function Cv() {
         <li>BioSignal Processing</li>
         <li>Medical Device Prototyping</li>
         <li>Biomechanics</li>
-        <li>Imaging (X-ray, MRI, CT, PET)</li>
+        <li>Imaging & Image Processing</li>
         <li>ISO Standards</li>
         <li>FDA Regulations</li>
         <li>EMG</li>
         <li>Bacterial Testing</li>
         <li>Phantom Development</li>
+        <li>Medical Image Processing</li>
+        <li>Medical Firmware</li>
+        <li>Verification & Validation</li>
+        <li>Data Collection & Analysis</li>
       </ul>
 
       <div className="mb-2 font-semibold text-sm">Mechanical CAD</div>
@@ -364,6 +524,8 @@ export default function Cv() {
         <li>KiCad</li>
         <li>EAGLE</li>
         <li>PCB Layout & Stackup</li>
+        <li>PCB Design</li>
+        <li>PCB Triage</li>
         <li>C/C++</li>
         <li>Embedded C</li>
         <li>FreeRTOS</li>
@@ -383,10 +545,13 @@ export default function Cv() {
       <div className="mb-2 font-semibold text-sm">Programming</div>
       <ul className="list-disc md:columns-3 columns-2 mx-6 mb-4 text-sm">
         <li>Python</li>
-        <li>C/C#</li>
+        <li>C / C++</li>
+        <li>JavaScript</li>
+        <li>TypeScript</li>
+        <li>SQL</li>
         <li>HTML & CSS</li>
         <li>LaTeX</li>
-        <li>Git (GitHub & GitLab)</li>
+        <li>Git</li>
       </ul>
 
       <div className="mb-2 font-semibold text-sm">Prototyping & Manufacturing</div>
@@ -394,9 +559,10 @@ export default function Cv() {
         <li>3D Printing (FDM)</li>
         <li>CNC & Manual Machining</li>
         <li>Laser Cutting</li>
+        <li>Waterjet Cutting</li>
         <li>PCB Fabrication</li>
+        <li>PCB Assembly</li>
         <li>Bench Testing & Validation</li>
-        <li>System Validation</li>
       </ul>
     </BaseLayout>
   );
