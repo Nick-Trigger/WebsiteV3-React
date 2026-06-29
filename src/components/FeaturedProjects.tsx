@@ -11,6 +11,7 @@ export default function FeaturedProjects() {
                 url="/projects/games"
                 badge="Interactive"
             />
+            <div className="divider my-0"></div>
             <HorizontalCard
                 title="Pulse Mate - Radial Arterial Line Placement Training Device"
                 img="/PulseMateLogo-01.svg"
@@ -25,7 +26,6 @@ export default function FeaturedProjects() {
                 url="/projects/clabsi"
                 badge="Medical Device"
             />
-            <div className="divider my-0"></div>
         </div>
     );
 }
