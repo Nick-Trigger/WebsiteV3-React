@@ -3,8 +3,6 @@ import ThemeToggle from './ThemeToggle';
 export default function SidebarFooter() {
   return (
     <>
-      <div className="block sticky pointer-events-none bottom-10 bg-base-200 justify-center h-12 [mask-image:linear-gradient(transparent,#000000)]"></div>
-
       <ThemeToggle />
 
       <div className="rounded-lg md:flex md:justify-center my-3 pb-3 pt-3 bg-base-300">

@@ -6,7 +6,7 @@ export default function Cv() {
     <BaseLayout title="Nicholas Trigger - Curriculum Vitae">
       <div className="mb-5">
         <div id="profile" className="text-3xl w-full font-bold">
-          Profile
+          Curriculum Vitae
         </div>
       </div>
 

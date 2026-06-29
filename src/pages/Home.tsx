@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import BaseLayout from '../components/BaseLayout';
 import HorizontalCard from '../components/HorizontalCard';
 import ExperienceCard from '../components/ExperienceCard';
+import FeaturedProjects from '../components/FeaturedProjects'
 
 const CircleArrow = () => (
   <svg
@@ -126,29 +127,7 @@ export default function Home() {
         <div className="text-3xl w-full font-bold mb-2">Featured Projects ⚙</div>
       </div>
 
-      <HorizontalCard
-        title="Arterial Line Placement Training Device"
-        img="/alptprototype.jpg"
-        desc="Easy to use and durable, this training device is designed with students in mind. (VentureWell Summer 2023 Cohort)(Patent Pending)"
-        url="/projects/arm"
-        badge="In Development"
-      />
-      <div className="divider my-0"></div>
-      <HorizontalCard
-        title="Open-Source Dog Activity Tracking Device"
-        img="/savinggrace.jpg"
-        desc="Led two teams to develop a tracking device for a 501(c)(3) non-kill dog shelter."
-        url="/projects/dog"
-        badge="EGR 101 TA F23"
-      />
-      <div className="divider my-0"></div>
-      <HorizontalCard
-        title="CLABSI Prevention Device"
-        img="/clabfree.png"
-        desc="Handheld UV-C disinfection device for central-line hubs. Custom KiCad PCBs, Zephyr RTOS firmware on nRF54L15, and hardware safety interlocks. People's Choice Award, Duke BME Capstone."
-        url="/projects/clabsi"
-        badge="Medical Device"
-      />
+      <FeaturedProjects />
 
       <div className="flex justify-center">
         <Link to="/projects" className="btn align-center">
