@@ -8,6 +8,11 @@ import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
 // emitting real HTML files so deep links work on GitHub Pages and the
 // pages stay crawlable for SEO / social previews.
 export default defineConfig({
+  // vite-react-ssg dev doesn't forward --port, so honor PORT from the
+  // environment (used by tooling) before falling back to Vite's default.
+  server: {
+    port: Number(process.env.PORT) || 5173,
+  },
   plugins: [
     react(),
     tailwindcss(),

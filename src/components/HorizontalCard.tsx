@@ -1,5 +1,4 @@
 import SmartLink from './SmartLink';
-import type { ReactNode } from 'react';
 
 interface HorizontalCardProps {
   title: string;

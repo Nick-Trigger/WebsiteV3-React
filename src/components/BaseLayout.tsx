@@ -5,7 +5,6 @@ import Header from './Header';
 import Footer from './Footer';
 import Sidebar from './Sidebar';
 import ContextMenu from './ContextMenu';
-import { Head } from 'vite-react-ssg';
 
 interface BaseLayoutProps {
   title?: string;

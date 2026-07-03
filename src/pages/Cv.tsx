@@ -22,7 +22,7 @@ export default function Cv() {
         full-time roles in medical device engineering, embedded systems, or hardware R&D.
       </div>
 
-      <div className="flex mb-5 gap-2 items-center self-center">
+      <div className="flex flex-wrap mb-5 gap-2 items-center self-center">
         <a
           href="https://duke.box.com/s/g4uf97sq9jq5zdsoe0rsb8g2djkvfpm2"
           className="btn align-center"

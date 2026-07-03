@@ -20,8 +20,8 @@ export default function Home() {
     <BaseLayout>
       <div className="pb-12 mt-5">
         <div className="text-xl py-1">Hey there 👋</div>
-        <div className="text-5xl font-bold">I'm Nicholas Trigger</div>
-        <div className="text-3xl py-3 font-bold">
+        <div className="text-4xl md:text-5xl font-bold">I'm Nicholas Trigger</div>
+        <div className="text-2xl md:text-3xl py-3 font-bold">
           Biomedical Engineer
         </div>
         <div className="py-2">
@@ -34,7 +34,7 @@ export default function Home() {
             VentureWell grant and a provisional patent.
           </span>
         </div>
-        <div className="mt-8 flex w-full gap-2">
+        <div className="mt-8 flex w-full flex-wrap gap-2">
           <a
             className="btn btn-outline btn-primary align-center"
             href="mailto:nicktrig124@gmail.com"
@@ -77,7 +77,7 @@ export default function Home() {
               viewBox="0 0 24 24"
               style={{ fill: 'currentColor' }}
             >
-              <path fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.5" d="M2.75 8.623v7.379a4 4 0 0 0 4 4h10.5a4 4 0 0 0 4-4v-5.69a4 4 0 0 0-4-4H12M2.75 8.624V6.998a3 3 0 0 1 3-3h2.9a2.5 2.5 0 0 1 1.768.732L12 6.313m-9.25 2.31h5.904a2.5 2.5 0 0 0 1.768-.732L12 6.313"></path>
+              <path fill="none" stroke="currentColor" strokeLinejoin="round" strokeWidth="1.5" d="M2.75 8.623v7.379a4 4 0 0 0 4 4h10.5a4 4 0 0 0 4-4v-5.69a4 4 0 0 0-4-4H12M2.75 8.624V6.998a3 3 0 0 1 3-3h2.9a2.5 2.5 0 0 1 1.768.732L12 6.313m-9.25 2.31h5.904a2.5 2.5 0 0 0 1.768-.732L12 6.313"></path>
             </svg>
           </a>
           <a
