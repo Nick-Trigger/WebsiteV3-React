@@ -1,8 +1,7 @@
 import { Link } from 'react-router-dom';
 import BaseLayout from '../components/BaseLayout';
-import HorizontalCard from '../components/HorizontalCard';
 import ExperienceCard from '../components/ExperienceCard';
-import FeaturedProjects from '../components/FeaturedProjects'
+import {FeaturedProjects} from '../components/ProjectComponets'
 
 const CircleArrow = () => (
   <svg
