@@ -38,6 +38,30 @@ html * {
     }
 }
 
+/* Filter change: fade + rise each result card, staggered top to bottom.
+   Re-triggered by remounting the list (key={cat}) when the filter changes. */
+@keyframes cardEnter {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card-enter {
+    animation: cardEnter 0.3s ease-out both;
+    animation-delay: calc(var(--card-index, 0) * 45ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .card-enter {
+        animation: none;
+    }
+}
+
 /* Allow the sidebar to scroll on short viewports without showing a scrollbar */
 .no-scrollbar {
     scrollbar-width: none; /* Firefox */

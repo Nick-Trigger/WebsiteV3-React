@@ -26,6 +26,8 @@ const paths = [
   '/projects/ecg',
   '/projects/factory-scheduler',
   '/projects/pet-ct-sim',
+  '/projects/web-planner',
+  '/projects/fastapi-react-starter',
   '/projects/games',
   '/projects/games/snake',
   '/projects/games/2048',
