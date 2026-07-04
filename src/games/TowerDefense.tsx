@@ -30,22 +30,23 @@ const makeRng = (seed: number) => {
   };
 };
 
-// Difficulty ramps linearly through wave 5, then compounds exponentially.
+// Difficulty ramps linearly through wave 5, then compounds gently — roughly
+// +12% HP, +2% speed (capped at 1.5x), and +5% reward per wave past 5.
 const LATE_WAVE = 5;
-const hpScale = (wave: number) => (wave > LATE_WAVE ? Math.pow(1.18, wave - LATE_WAVE) : 1);
+const hpScale = (wave: number) => (wave > LATE_WAVE ? Math.pow(1.12, wave - LATE_WAVE) : 1);
 const speedScale = (wave: number) =>
-  wave > LATE_WAVE ? Math.min(Math.pow(1.03, wave - LATE_WAVE), 1.6) : 1;
+  wave > LATE_WAVE ? Math.min(Math.pow(1.02, wave - LATE_WAVE), 1.5) : 1;
 // Rewards grow too (more slowly) so the economy can keep pace.
-const rewardScale = (wave: number) => (wave > LATE_WAVE ? Math.pow(1.07, wave - LATE_WAVE) : 1);
+const rewardScale = (wave: number) => (wave > LATE_WAVE ? Math.pow(1.05, wave - LATE_WAVE) : 1);
 
 // Frames between spawns shrinks each wave, so later waves flood the path.
 const SPAWN_GAP_START = 40;
-const SPAWN_GAP_MIN = 10;
+const SPAWN_GAP_MIN = 12;
 const spawnGap = (wave: number) =>
-  Math.max(SPAWN_GAP_MIN, Math.round(SPAWN_GAP_START * Math.pow(0.93, wave - 1)));
+  Math.max(SPAWN_GAP_MIN, Math.round(SPAWN_GAP_START * Math.pow(0.95, wave - 1)));
 
-type TowerKind = 'gun' | 'sniper' | 'frost';
-const KINDS: TowerKind[] = ['gun', 'sniper', 'frost'];
+type TowerKind = 'gun' | 'sniper' | 'frost' | 'fire';
+const KINDS: TowerKind[] = ['gun', 'sniper', 'frost', 'fire'];
 
 interface TowerDef {
   name: string;
@@ -57,12 +58,16 @@ interface TowerDef {
   dmg: number;
   slow?: number; // movement multiplier applied to hit enemies
   slowFrames?: number;
+  burn?: { dmg: number; frames: number }; // damage applied every frame while burning
 }
 
 const TOWER_DEFS: Record<TowerKind, TowerDef> = {
   gun: { name: 'Gun', cost: 50, color: '#fb923c', barrel: '#7c2d12', range: CELL * 2.4, cd: 28, dmg: 14 },
   sniper: { name: 'Sniper', cost: 100, color: '#60a5fa', barrel: '#1e3a8a', range: CELL * 4.2, cd: 72, dmg: 60 },
   frost: { name: 'Frost', cost: 75, color: '#67e8f9', barrel: '#0e7490', range: CELL * 2.2, cd: 42, dmg: 6, slow: 0.45, slowFrames: 90 },
+  // Fire ignites on hit and never targets an enemy that is already burning,
+  // so it naturally spreads its damage across the wave.
+  fire: { name: 'Fire', cost: 200, color: '#ef4444', barrel: '#7f1d1d', range: CELL * 2.0, cd: 50, dmg: 8, burn: { dmg: 0.9, frames: 120 } },
 };
 
 // Effective stats grow with level.
@@ -74,12 +79,13 @@ const effective = (kind: TowerKind, level: number) => {
     dmg: Math.round(d.dmg * Math.pow(1.6, level - 1)),
     slow: d.slow,
     slowFrames: d.slowFrames,
+    burn: d.burn ? { dmg: d.burn.dmg * Math.pow(1.6, level - 1), frames: d.burn.frames } : undefined,
   };
 };
 const upgradeCost = (kind: TowerKind, level: number) => Math.round(TOWER_DEFS[kind].cost * (0.6 + 0.6 * level));
 
 // ---- enemy classes: each restyles the headshot and rescales stats ----------
-type EnemyKind = 'normal' | 'angry' | 'runner' | 'tank' | 'boss';
+type EnemyKind = 'normal' | 'angry' | 'runner' | 'tank' | 'healer' | 'splitter' | 'phantom' | 'boss';
 
 interface EnemyClass {
   name: string;
@@ -90,6 +96,10 @@ interface EnemyClass {
   ring: string;
   minWave: number;
   weight: number; // 0 = excluded from the random pool (boss is special)
+  heal?: { radius: number; frac: number; cd: number }; // pulses HP (as a fraction of maxHp) to nearby enemies
+  split?: { kind: EnemyKind; count: number; hpFrac: number }; // spawns children on death
+  slowImmune?: boolean; // frost slow doesn't stick
+  alpha?: number; // rendered translucent
   face?: (ctx: CanvasRenderingContext2D, x: number, y: number, r: number) => void;
 }
 
@@ -171,6 +181,73 @@ const ENEMY_CLASSES: Record<EnemyKind, EnemyClass> = {
       ctx.fill();
     },
   },
+  healer: {
+    name: 'Healer',
+    hpMul: 1.3,
+    speedMul: 0.85,
+    rewardMul: 2.2,
+    radiusMul: 1.05,
+    ring: '#4ade80',
+    minWave: 6,
+    weight: 2,
+    heal: { radius: CELL * 1.9, frac: 0.04, cd: 50 },
+    face: (ctx, x, y, r) => {
+      // medic cross on the forehead
+      ctx.fillStyle = '#16a34a';
+      const s = r * 0.46;
+      const w = r * 0.16;
+      const cy = y - 0.42 * r;
+      ctx.fillRect(x - w / 2, cy - s / 2, w, s);
+      ctx.fillRect(x - s / 2, cy - w / 2, s, w);
+    },
+  },
+  splitter: {
+    name: 'Splitter',
+    hpMul: 1.9,
+    speedMul: 0.85,
+    rewardMul: 1.6,
+    radiusMul: 1.1,
+    ring: '#c084fc',
+    minWave: 7,
+    weight: 2,
+    split: { kind: 'runner', count: 2, hpFrac: 0.4 },
+    face: (ctx, x, y, r) => {
+      // crack running down the middle, hinting it breaks in two
+      ctx.strokeStyle = '#c084fc';
+      ctx.lineWidth = r * 0.12;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(x, y - 0.85 * r);
+      ctx.lineTo(x - 0.16 * r, y - 0.3 * r);
+      ctx.lineTo(x + 0.16 * r, y + 0.25 * r);
+      ctx.lineTo(x, y + 0.85 * r);
+      ctx.stroke();
+    },
+  },
+  phantom: {
+    name: 'Phantom',
+    hpMul: 1.1,
+    speedMul: 1.45,
+    rewardMul: 1.7,
+    radiusMul: 0.95,
+    ring: 'rgba(165,243,252,0.9)',
+    minWave: 8,
+    weight: 2,
+    slowImmune: true,
+    alpha: 0.72,
+    face: (ctx, x, y, r) => {
+      // sunglasses: too cool to be slowed
+      ctx.fillStyle = 'rgba(23,23,23,0.92)';
+      ctx.fillRect(x - 0.55 * r, y - 0.3 * r, 0.44 * r, 0.26 * r);
+      ctx.fillRect(x + 0.11 * r, y - 0.3 * r, 0.44 * r, 0.26 * r);
+      ctx.strokeStyle = '#171717';
+      ctx.lineWidth = r * 0.07;
+      ctx.beginPath();
+      ctx.moveTo(x - 0.11 * r, y - 0.2 * r);
+      ctx.lineTo(x + 0.11 * r, y - 0.2 * r);
+      ctx.stroke();
+    },
+  },
   boss: {
     name: 'Boss',
     hpMul: 6,
@@ -232,9 +309,12 @@ type Enemy = {
   kind: EnemyKind;
   slow: number;
   slowFactor: number;
+  healT: number; // frames until this enemy's next heal pulse (healers only)
+  burn: number; // frames of burning left
+  burnDmg: number; // damage taken per frame while burning
 };
 type Tower = { x: number; y: number; cell: number; kind: TowerKind; level: number; angle: number; timer: number; invested: number };
-type Shot = { x: number; y: number; target: number; dmg: number; color: string; slow?: number; slowFrames?: number };
+type Shot = { x: number; y: number; target: number; dmg: number; color: string; slow?: number; slowFrames?: number; burnDmg?: number; burnFrames?: number };
 
 const PATH_CELLS: [number, number][] = [
   [0, 2],
@@ -289,6 +369,8 @@ export default function TowerDefense() {
   const activeRef = useRef(false);
   const overRef = useRef(false);
   const selectedRef = useRef<number | null>(null);
+  const hoverRef = useRef<number | null>(null); // cell under the pointer, for the build preview
+  const buildKindRef = useRef<TowerKind>('gun'); // mirrors buildKind for the draw loop
 
   const [lives, setLives] = useState(START_LIVES);
   const [cash, setCash] = useState(START_CASH);
@@ -303,6 +385,30 @@ export default function TowerDefense() {
     selectedRef.current = cell;
     setSelected(cell);
   };
+
+  // Builds an enemy of `kind` at the given spot, scaled to the current wave.
+  // hpFrac shrinks HP (and reward) for split children.
+  const makeEnemy = useCallback((kind: EnemyKind, x: number, y: number, wp: number, hpFrac = 1): Enemy => {
+    const cls = ENEMY_CLASSES[kind];
+    const w = waveRef.current;
+    const hp = Math.max(1, Math.round((26 + w * 16) * hpScale(w) * cls.hpMul * hpFrac));
+    return {
+      id: eid.current++,
+      x,
+      y,
+      wp,
+      hp,
+      maxHp: hp,
+      speed: (1.05 + Math.min(w * 0.05, 1.3)) * speedScale(w) * cls.speedMul,
+      reward: Math.max(1, Math.round(KILL_REWARD * cls.rewardMul * rewardScale(w) * hpFrac)),
+      kind,
+      slow: 0,
+      slowFactor: 1,
+      healT: 0,
+      burn: 0,
+      burnDmg: 0,
+    };
+  }, []);
 
   // ---- drawing -------------------------------------------------------------
   const drawHeadshot = (ctx: CanvasRenderingContext2D, x: number, y: number, r: number) => {
@@ -383,14 +489,46 @@ export default function TowerDefense() {
     enemies.current.forEach((e) => {
       const cls = ENEMY_CLASSES[e.kind];
       const r = CELL * 0.42 * cls.radiusMul;
+      if (cls.alpha) ctx.globalAlpha = cls.alpha;
       drawHeadshot(ctx, e.x, e.y, r);
       cls.face?.(ctx, e.x, e.y, r);
 
       ctx.beginPath();
       ctx.arc(e.x, e.y, r, 0, Math.PI * 2);
-      ctx.lineWidth = e.slow > 0 ? 2.5 : 1.8;
-      ctx.strokeStyle = e.slow > 0 ? '#22d3ee' : cls.ring;
+      ctx.lineWidth = e.burn > 0 || e.slow > 0 ? 2.5 : 1.8;
+      ctx.strokeStyle = e.burn > 0 ? '#f97316' : e.slow > 0 ? '#22d3ee' : cls.ring;
       ctx.stroke();
+      ctx.globalAlpha = 1;
+
+      // flickering two-tone flame above a burning enemy
+      if (e.burn > 0) {
+        const flick = 0.75 + 0.25 * Math.sin(e.burn * 0.7);
+        const fy = e.y - r - 9; // just above the hp bar
+        ctx.fillStyle = '#f97316';
+        ctx.beginPath();
+        ctx.moveTo(e.x - 3.5, fy);
+        ctx.lineTo(e.x, fy - 9 * flick);
+        ctx.lineTo(e.x + 3.5, fy);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = '#fbbf24';
+        ctx.beginPath();
+        ctx.moveTo(e.x - 1.8, fy);
+        ctx.lineTo(e.x, fy - 5 * flick);
+        ctx.lineTo(e.x + 1.8, fy);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      // expanding ring right after a heal pulse
+      if (cls.heal && e.healT > cls.heal.cd - 12) {
+        const t = (cls.heal.cd - e.healT) / 12;
+        ctx.beginPath();
+        ctx.arc(e.x, e.y, r + t * (cls.heal.radius - r), 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(74,222,128,${0.5 * (1 - t)})`;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
 
       const bw = CELL * 0.84 * cls.radiusMul;
       const frac = Math.max(0, e.hp / e.maxHp);
@@ -406,6 +544,33 @@ export default function TowerDefense() {
       ctx.arc(s.x, s.y, 3, 0, Math.PI * 2);
       ctx.fill();
     });
+
+    // Build preview: ghost tower + range ring under the pointer. Green when
+    // the spot is buildable and affordable, red otherwise.
+    const hoverCell = hoverRef.current;
+    if (hoverCell !== null && !overRef.current && !towers.current.some((t) => t.cell === hoverCell)) {
+      const { x, y } = cellCenter(hoverCell % GRID, Math.floor(hoverCell / GRID));
+      const kind = buildKindRef.current;
+      const eff = effective(kind, 1);
+      const ok = !PATH_SET.has(hoverCell) && cashRef.current >= TOWER_DEFS[kind].cost;
+
+      ctx.beginPath();
+      ctx.arc(x, y, eff.range, 0, Math.PI * 2);
+      ctx.fillStyle = ok ? 'rgba(74,222,128,0.10)' : 'rgba(248,113,113,0.10)';
+      ctx.fill();
+      ctx.setLineDash([5, 4]);
+      ctx.strokeStyle = ok ? 'rgba(74,222,128,0.8)' : 'rgba(248,113,113,0.8)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.globalAlpha = 0.55;
+      ctx.beginPath();
+      ctx.arc(x, y, CELL * 0.4, 0, Math.PI * 2);
+      ctx.fillStyle = ok ? TOWER_DEFS[kind].color : '#ef4444';
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
   }, []);
 
   // ---- simulation ----------------------------------------------------------
@@ -415,22 +580,7 @@ export default function TowerDefense() {
       if (spawnTimer.current <= 0) {
         const isBoss = waveRef.current % 5 === 0 && toSpawn.current === 1;
         const kind: EnemyKind = isBoss ? 'boss' : pickKind(waveRef.current, rng.current);
-        const cls = ENEMY_CLASSES[kind];
-        const baseHp = (26 + waveRef.current * 16) * hpScale(waveRef.current);
-        const hp = Math.round(baseHp * cls.hpMul);
-        enemies.current.push({
-          id: eid.current++,
-          x: WAYPOINTS[0].x,
-          y: WAYPOINTS[0].y,
-          wp: 1,
-          hp,
-          maxHp: hp,
-          speed: (1.05 + Math.min(waveRef.current * 0.05, 1.3)) * speedScale(waveRef.current) * cls.speedMul,
-          reward: Math.round(KILL_REWARD * cls.rewardMul * rewardScale(waveRef.current)),
-          kind,
-          slow: 0,
-          slowFactor: 1,
-        });
+        enemies.current.push(makeEnemy(kind, WAYPOINTS[0].x, WAYPOINTS[0].y, 1));
         toSpawn.current -= 1;
         spawnTimer.current = spawnGap(waveRef.current);
       }
@@ -476,11 +626,28 @@ export default function TowerDefense() {
       }
     }
 
+    // Healers pulse, restoring a fraction of max HP to nearby enemies.
+    enemies.current.forEach((e) => {
+      const heal = ENEMY_CLASSES[e.kind].heal;
+      if (!heal) return;
+      e.healT -= 1;
+      if (e.healT <= 0) {
+        e.healT = heal.cd;
+        enemies.current.forEach((o) => {
+          if (o.id !== e.id && Math.hypot(o.x - e.x, o.y - e.y) <= heal.radius) {
+            o.hp = Math.min(o.maxHp, o.hp + Math.ceil(o.maxHp * heal.frac));
+          }
+        });
+      }
+    });
+
     towers.current.forEach((t) => {
       const eff = effective(t.kind, t.level);
       if (t.timer > 0) t.timer -= 1;
       let best: Enemy | null = null;
       enemies.current.forEach((e) => {
+        // fire towers ignore enemies that are already burning
+        if (eff.burn && e.burn > 0) return;
         if (Math.hypot(e.x - t.x, e.y - t.y) <= eff.range && (!best || e.wp > best.wp)) best = e;
       });
       if (best) {
@@ -495,6 +662,8 @@ export default function TowerDefense() {
             color: TOWER_DEFS[t.kind].color,
             slow: eff.slow,
             slowFrames: eff.slowFrames,
+            burnDmg: eff.burn?.dmg,
+            burnFrames: eff.burn?.frames,
           });
           t.timer = eff.cd;
         }
@@ -503,6 +672,27 @@ export default function TowerDefense() {
 
     let killCash = 0;
     let kills = 0;
+
+    // Burning enemies take damage every frame; deaths pay out like shot kills.
+    const burnDeaths: Enemy[] = [];
+    enemies.current.forEach((e) => {
+      if (e.burn <= 0) return;
+      e.burn -= 1;
+      e.hp -= e.burnDmg;
+      if (e.hp <= 0) burnDeaths.push(e);
+    });
+    for (const e of burnDeaths) {
+      enemies.current = enemies.current.filter((en) => en.id !== e.id);
+      const split = ENEMY_CLASSES[e.kind].split;
+      if (split) {
+        for (let i = 0; i < split.count; i++) {
+          enemies.current.push(makeEnemy(split.kind, e.x + (i * 2 - 1) * 6, e.y, e.wp, split.hpFrac));
+        }
+      }
+      killCash += e.reward;
+      kills += 1;
+    }
+
     shots.current = shots.current.filter((s) => {
       const e = enemies.current.find((en) => en.id === s.target);
       if (!e) return false;
@@ -511,12 +701,23 @@ export default function TowerDefense() {
       const d = Math.hypot(dx, dy);
       if (d <= SHOT_SPEED + 4) {
         e.hp -= s.dmg;
-        if (s.slow) {
+        if (s.slow && !ENEMY_CLASSES[e.kind].slowImmune) {
           e.slow = s.slowFrames ?? 0;
           e.slowFactor = s.slow;
         }
+        if (s.burnDmg) {
+          // ignite (or refresh) the burn; it doesn't stack
+          e.burn = s.burnFrames ?? 0;
+          e.burnDmg = s.burnDmg;
+        }
         if (e.hp <= 0) {
           enemies.current = enemies.current.filter((en) => en.id !== e.id);
+          const split = ENEMY_CLASSES[e.kind].split;
+          if (split) {
+            for (let i = 0; i < split.count; i++) {
+              enemies.current.push(makeEnemy(split.kind, e.x + (i * 2 - 1) * 6, e.y, e.wp, split.hpFrac));
+            }
+          }
           killCash += e.reward;
           kills += 1;
         }
@@ -541,7 +742,7 @@ export default function TowerDefense() {
     }
 
     draw();
-  }, [draw]);
+  }, [draw, makeEnemy]);
 
   const startWave = useCallback(() => {
     if (activeRef.current || overRef.current) return;
@@ -576,18 +777,26 @@ export default function TowerDefense() {
     draw();
   }, [draw]);
 
-  // Tap: select a tower if one is there, otherwise build the active type.
-  const onTap = (clientX: number, clientY: number) => {
-    if (overRef.current) return;
+  // Maps a client coordinate to a grid cell index, or null when off-canvas.
+  const cellAt = (clientX: number, clientY: number): number | null => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) return null;
     const rect = canvas.getBoundingClientRect();
     const x = (clientX - rect.left) * (SIZE / rect.width);
     const y = (clientY - rect.top) * (SIZE / rect.height);
     const col = Math.floor(x / CELL);
     const row = Math.floor(y / CELL);
-    if (col < 0 || row < 0 || col >= GRID || row >= GRID) return;
-    const cell = row * GRID + col;
+    if (col < 0 || row < 0 || col >= GRID || row >= GRID) return null;
+    return row * GRID + col;
+  };
+
+  // Tap: select a tower if one is there, otherwise build the active type.
+  const onTap = (clientX: number, clientY: number) => {
+    if (overRef.current) return;
+    const cell = cellAt(clientX, clientY);
+    if (cell === null) return;
+    const col = cell % GRID;
+    const row = Math.floor(cell / GRID);
 
     const existing = towers.current.find((t) => t.cell === cell);
     if (existing) {
@@ -660,7 +869,7 @@ export default function TowerDefense() {
       controls={
         <div className="flex flex-col items-center gap-2 w-full max-w-[420px]">
           {/* tower palette */}
-          <div className="flex gap-1.5">
+          <div className="flex flex-wrap justify-center gap-1.5">
             {KINDS.map((k) => {
               const d = TOWER_DEFS[k];
               const isActive = buildKind === k;
@@ -671,6 +880,7 @@ export default function TowerDefense() {
                   type="button"
                   onClick={() => {
                     setBuildKind(k);
+                    buildKindRef.current = k;
                     select(null);
                   }}
                   className={`btn btn-sm flex-col gap-0 h-auto py-1.5 ${isActive ? 'btn-primary' : 'btn-outline'} ${afford ? '' : 'opacity-50'}`}
@@ -691,6 +901,7 @@ export default function TowerDefense() {
               <span className="text-[11px] opacity-90">
                 DMG {selEff.dmg} · RNG {Math.round(selEff.range / CELL)}
                 {TOWER_DEFS[sel.kind].slow ? ' · slows' : ''}
+                {selEff.burn ? ` · burns (${Math.round(selEff.burn.dmg * selEff.burn.frames)} over ${Math.round(selEff.burn.frames / FPS)}s)` : ''}
               </span>
               <div className="flex gap-1.5">
                 <button
@@ -727,6 +938,17 @@ export default function TowerDefense() {
         width={SIZE}
         height={SIZE}
         onClick={(e) => onTap(e.clientX, e.clientY)}
+        onPointerMove={(e) => {
+          hoverRef.current = cellAt(e.clientX, e.clientY);
+        }}
+        onPointerLeave={() => {
+          hoverRef.current = null;
+        }}
+        onPointerUp={(e) => {
+          // Touch has no hover: clear the preview when the finger lifts
+          // (placement still happens via the click that follows).
+          if (e.pointerType !== 'mouse') hoverRef.current = null;
+        }}
         className="w-full rounded-xl border border-base-300 shadow-lg touch-none cursor-pointer"
         style={{ aspectRatio: '1 / 1' }}
       />
