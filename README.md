@@ -1,6 +1,6 @@
-# nicholastrigger.com
+# [nicholastrigger.com](https://www.nicholastrigger.com)
 
-The personal portfolio of Nicholas Trigger, a Duke BME Alum '26 focused on biomedical device engineering, embedded systems, and medical imaging. Live at [nicholastrigger.com](https://nicholastrigger.com).
+The personal portfolio of Nicholas Trigger, a Duke BME Alum '26 focused on biomedical device engineering, embedded systems, and medical imaging. Live at [nicholastrigger.com](https://www.nicholastrigger.com).
 
 [![Deploy to GitHub Pages](https://github.com/Nick-Trigger/WebsiteV3-React/actions/workflows/deploy.yml/badge.svg)](https://github.com/Nick-Trigger/WebsiteV3-React/actions/workflows/deploy.yml)
 
