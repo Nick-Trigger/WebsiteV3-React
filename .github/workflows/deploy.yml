@@ -45,6 +45,13 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+      # Ping IndexNow (Bing et al.) with the freshly deployed URLs.
+      # Non-fatal: indexing is best-effort and shouldn't fail the deploy.
+      - name: Notify IndexNow
+        run: node scripts/indexnow.mjs
+        continue-on-error: true
