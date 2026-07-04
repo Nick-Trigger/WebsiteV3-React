@@ -71,7 +71,7 @@ export default function ContextMenu() {
     { label: 'Back to top', run: () => window.scrollTo({ top: 0, behavior: 'smooth' }) },
     { label: 'Cookies?', run: () => setCookieModal(true) },
     'divider',
-    { label: 'View source on GitHub', run: () => window.open('https://github.com/Nick-Trigger', '_blank', 'noopener') },
+    { label: 'View source on GitHub', run: () => window.open('https://github.com/Nick-Trigger/Portfolio-Websites', '_blank', 'noopener') },
   ];
 
   return (

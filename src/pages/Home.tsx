@@ -136,7 +136,7 @@ export default function Home() {
       </div>
 
       <div>
-        <div className="text-3xl w-full font-bold mb-5 mt-10">Experience</div>
+        <div className="text-3xl w-full font-bold mb-5 mt-10">Featured Experience</div>
       </div>
 
       <ExperienceCard
