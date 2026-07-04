@@ -16,6 +16,34 @@ const SHOT_SPEED = 7;
 const SELL_RATE = 0.7;
 const MAX_LEVEL = 3;
 
+// Deterministic PRNG (mulberry32). The generator is re-seeded with the same
+// value at the start of every run, so enemy composition — the only random
+// element — plays out identically each game.
+const RNG_SEED = 0x51ab1e;
+const makeRng = (seed: number) => {
+  let s = seed >>> 0;
+  return () => {
+    s = (s + 0x6d2b79f5) | 0;
+    let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+};
+
+// Difficulty ramps linearly through wave 5, then compounds exponentially.
+const LATE_WAVE = 5;
+const hpScale = (wave: number) => (wave > LATE_WAVE ? Math.pow(1.18, wave - LATE_WAVE) : 1);
+const speedScale = (wave: number) =>
+  wave > LATE_WAVE ? Math.min(Math.pow(1.03, wave - LATE_WAVE), 1.6) : 1;
+// Rewards grow too (more slowly) so the economy can keep pace.
+const rewardScale = (wave: number) => (wave > LATE_WAVE ? Math.pow(1.07, wave - LATE_WAVE) : 1);
+
+// Frames between spawns shrinks each wave, so later waves flood the path.
+const SPAWN_GAP_START = 40;
+const SPAWN_GAP_MIN = 10;
+const spawnGap = (wave: number) =>
+  Math.max(SPAWN_GAP_MIN, Math.round(SPAWN_GAP_START * Math.pow(0.93, wave - 1)));
+
 type TowerKind = 'gun' | 'sniper' | 'frost';
 const KINDS: TowerKind[] = ['gun', 'sniper', 'frost'];
 
@@ -177,12 +205,13 @@ const ENEMY_CLASSES: Record<EnemyKind, EnemyClass> = {
 };
 
 // Weighted pick among classes unlocked by the current wave (boss excluded).
-const pickKind = (wave: number): EnemyKind => {
+// Uses the seeded generator so the sequence is identical every run.
+const pickKind = (wave: number, rand: () => number): EnemyKind => {
   const pool = (Object.keys(ENEMY_CLASSES) as EnemyKind[]).filter(
     (k) => ENEMY_CLASSES[k].weight > 0 && ENEMY_CLASSES[k].minWave <= wave,
   );
   const total = pool.reduce((s, k) => s + ENEMY_CLASSES[k].weight, 0);
-  let roll = Math.random() * total;
+  let roll = rand() * total;
   for (const k of pool) {
     roll -= ENEMY_CLASSES[k].weight;
     if (roll <= 0) return k;
@@ -248,6 +277,7 @@ export default function TowerDefense() {
   const towers = useRef<Tower[]>([]);
   const shots = useRef<Shot[]>([]);
   const eid = useRef(0);
+  const rng = useRef(makeRng(RNG_SEED));
 
   const livesRef = useRef(START_LIVES);
   const cashRef = useRef(START_CASH);
@@ -384,9 +414,9 @@ export default function TowerDefense() {
       spawnTimer.current -= 1;
       if (spawnTimer.current <= 0) {
         const isBoss = waveRef.current % 5 === 0 && toSpawn.current === 1;
-        const kind: EnemyKind = isBoss ? 'boss' : pickKind(waveRef.current);
+        const kind: EnemyKind = isBoss ? 'boss' : pickKind(waveRef.current, rng.current);
         const cls = ENEMY_CLASSES[kind];
-        const baseHp = 26 + waveRef.current * 16;
+        const baseHp = (26 + waveRef.current * 16) * hpScale(waveRef.current);
         const hp = Math.round(baseHp * cls.hpMul);
         enemies.current.push({
           id: eid.current++,
@@ -395,14 +425,14 @@ export default function TowerDefense() {
           wp: 1,
           hp,
           maxHp: hp,
-          speed: (1.05 + Math.min(waveRef.current * 0.05, 1.3)) * cls.speedMul,
-          reward: Math.round(KILL_REWARD * cls.rewardMul),
+          speed: (1.05 + Math.min(waveRef.current * 0.05, 1.3)) * speedScale(waveRef.current) * cls.speedMul,
+          reward: Math.round(KILL_REWARD * cls.rewardMul * rewardScale(waveRef.current)),
           kind,
           slow: 0,
           slowFactor: 1,
         });
         toSpawn.current -= 1;
-        spawnTimer.current = 40;
+        spawnTimer.current = spawnGap(waveRef.current);
       }
     }
 
@@ -527,6 +557,7 @@ export default function TowerDefense() {
     enemies.current = [];
     towers.current = [];
     shots.current = [];
+    rng.current = makeRng(RNG_SEED);
     livesRef.current = START_LIVES;
     cashRef.current = START_CASH;
     waveRef.current = 0;
