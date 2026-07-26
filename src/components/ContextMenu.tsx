@@ -58,6 +58,7 @@ export default function ContextMenu() {
     { label: 'Home', run: () => navigate('/') },
     { label: 'Projects', run: () => navigate('/projects') },
     { label: 'Games', run: () => navigate('/projects/games') },
+    { label: 'Playgrounds', run: () => navigate('/projects/playgrounds') },
     'divider',
     {
       label: 'Copy link to page',

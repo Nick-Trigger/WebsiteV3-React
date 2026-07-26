@@ -13,6 +13,11 @@ export default defineConfig({
   server: {
     port: Number(process.env.PORT) || 5173,
   },
+  // The playground sandbox workers (src/playgrounds/*.worker.ts) use dynamic
+  // imports, which the default 'iife' worker format can't bundle.
+  worker: {
+    format: 'es',
+  },
   plugins: [
     react(),
     tailwindcss(),

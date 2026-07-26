@@ -36,7 +36,13 @@ const paths = [
   '/projects/games/breakout',
   '/projects/games/pong',
   '/projects/games/sliding-puzzle',
-  '/projects/games/whack-a-mole'
+  '/projects/games/whack-a-mole',
+  '/projects/playgrounds',
+  '/projects/playgrounds/python',
+  '/projects/playgrounds/javascript',
+  '/projects/playgrounds/c',
+  '/projects/playgrounds/cpp',
+  '/projects/playgrounds/rust'
 ];
 
 const today = new Date().toISOString().slice(0, 10);
