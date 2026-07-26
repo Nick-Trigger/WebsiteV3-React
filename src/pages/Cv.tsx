@@ -11,15 +11,17 @@ export default function Cv() {
       </div>
 
       <div className="mb-10 text-justify">
-        Recent Duke BME graduate (BSE in Biomedical Engineering, '26) with hands-on experience
-        across medical device R&D, embedded systems, and clinical research. I love building
-        things, from PCB-level hardware and firmware to bacterial testing protocols and
-        FDA-compliant clinical workflows. Most recently working as an R&D Research Engineer at
-        Reselute Medical and as a Classroom R&D Engineer in Duke's BME department, designing and
-        validating electronic lab hardware used by students every day. Co-founder of P.A.T.S.
-        Development, where our team built an arterial line training device in collaboration with
-        Duke Med, backed by a $5K VentureWell grant and a provisional patent. Actively seeking
-        full-time roles in medical device engineering, embedded systems, or hardware R&D.
+        Biomedical Engineering alumnus from Duke University (BSE, '26) specializing in medical
+        device R&D, with hands-on experience designing, prototyping, and validating hardware from
+        PCB-level electronics to mechanical enclosures. Comfortable across embedded systems
+        (C/C++, RTOS, ESP32) and benchtop testing under ISO/FDA-conscious development, with
+        clinical research and leadership experience that bridges engineering and real-world
+        clinical workflows. Most recently an R&D Engineer at Reselute Medical and a Classroom R&D
+        Engineer in Duke's BME department, designing and validating electronic lab hardware used
+        by students every day. Co-founder of P.A.T.S. Development, where our team built an
+        arterial line training device in collaboration with Duke Med, backed by a $5K VentureWell
+        grant and a provisional patent. Actively seeking full-time roles in medical device
+        engineering, embedded systems, or hardware R&D.
       </div>
 
       <div className="flex flex-wrap mb-5 gap-2 items-center self-center">
@@ -97,15 +99,11 @@ export default function Cv() {
         >
           <ul className="list-disc mx-6 mb-2 grid gap-0.5 text-sm">
             <li>
-              Coursework: Embedded Medical Devices, Modern Diagnostic Imaging Systems,
-              Biomechanics, BME Independent Study
+              Relevant Coursework: Biomaterials, Biomechanics, Medical Device Design, Embedded
+              Medical Devices, Imaging Systems
             </li>
           </ul>
         </TimeLine>
-        <TimeLine
-          title="Incarnate Word Academy High School"
-          subtitle="2018 to 2022 · Corpus Christi, TX"
-        />
       </div>
 
       <div className="mb-5">
@@ -116,7 +114,7 @@ export default function Cv() {
 
       <div className="time-line-container mb-10">
         <TimeLine
-          title="R&D Research Engineer"
+          title="Research and Development Engineer"
           subtitle="December 2025 to May 2026 at Reselute Medical · Durham, NC"
         >
           <ul className="list-disc mx-6 mb-6 grid gap-0.5 text-sm">
@@ -228,18 +226,6 @@ export default function Cv() {
               Collaborated with physicians, residents, and research staff to support ongoing
               clinical investigations.
             </li>
-          </ul>
-        </TimeLine>
-        <TimeLine
-          title="Soccer Referee (Grade 6)"
-          subtitle="March 2021 to Present at U.S. Soccer Federation · National"
-        >
-          <ul className="list-disc mx-6 mb-6 grid gap-0.5 text-sm">
-            <li>
-              Applied the laws of soccer as designated by The IFAB in a fair and consistent
-              manner.
-            </li>
-            <li>Managed game safety and communicated effectively with players and coaches.</li>
           </ul>
         </TimeLine>
       </div>
@@ -444,7 +430,7 @@ export default function Cv() {
           </ul>
         </TimeLine>
         <TimeLine
-          title="Member · Firmware & Payload | Duke Club AERO"
+          title="Payload Team Engineer · Duke University Club Aerospace"
           subtitle="August 2023 to May 2025 · Durham, NC"
         >
           <ul className="list-disc mx-6 grid gap-0.5 text-sm">
@@ -487,7 +473,9 @@ export default function Cv() {
       </div>
 
       <ul className="list-disc mx-6 mb-10 grid gap-2">
-        <li>Machine Shop Certification</li>
+        <li>CSSC: Lean Six Sigma White Belt</li>
+        <li>Nordic Semiconductor: nRF Connect SDK Fundamentals</li>
+        <li>Nordic Semiconductor: Matter Fundamentals</li>
         <li>
           <a
             href="https://www.citiprogram.org/verify/?w36eb6ede-5dde-40c6-a7b6-5dc6190f6a21-57141618"
@@ -519,15 +507,17 @@ export default function Cv() {
         <li>BioSignal Processing</li>
         <li>Medical Device Prototyping</li>
         <li>Biomechanics</li>
-        <li>Imaging & Image Processing</li>
+        <li>X-ray, CT, MRI & PET</li>
+        <li>Medical Image Processing</li>
         <li>ISO Standards</li>
         <li>FDA Regulations</li>
         <li>EMG</li>
         <li>Bacterial Testing</li>
         <li>Phantom Development</li>
-        <li>Medical Image Processing</li>
         <li>Medical Firmware</li>
         <li>Verification & Validation</li>
+        <li>Bench Testing</li>
+        <li>System Validation</li>
         <li>Data Collection & Analysis</li>
       </ul>
 
@@ -571,7 +561,7 @@ export default function Cv() {
         <li>SQL</li>
         <li>HTML & CSS</li>
         <li>LaTeX</li>
-        <li>Git</li>
+        <li>Git, GitHub & GitLab</li>
       </ul>
 
       <div className="mb-2 font-semibold text-sm">Prototyping & Manufacturing</div>
