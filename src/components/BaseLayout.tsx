@@ -5,6 +5,7 @@ import Header from './Header';
 import Footer from './Footer';
 import Sidebar from './Sidebar';
 import ContextMenu from './ContextMenu';
+import CookieSettings from './CookieSettings';
 
 interface BaseLayoutProps {
   title?: string;
@@ -44,6 +45,7 @@ export default function BaseLayout({
     <>
       <Seo title={title} description={description} image={image} />
       <ContextMenu />
+      <CookieSettings />
       <div className="bg-base-100 drawer lg:drawer-open">
         <input id="my-drawer" type="checkbox" className="drawer-toggle" />
         <div className="drawer-content bg-base-100">

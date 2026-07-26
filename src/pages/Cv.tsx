@@ -10,7 +10,7 @@ export default function Cv() {
         </div>
       </div>
 
-      <div className="mb-10 text-justify">
+      <div className="mb-10">
         Biomedical Engineering alumnus from Duke University (BSE, '26) specializing in medical
         device R&D, with hands-on experience designing, prototyping, and validating hardware from
         PCB-level electronics to mechanical enclosures. Comfortable across embedded systems

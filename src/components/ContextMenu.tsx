@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import CookieDrop from './CookieDrop';
+import { openCookieSettings } from './CookieSettings';
 
 const MENU_W = 224;
 const MENU_H = 290; // estimate, used only to keep the menu on-screen
@@ -14,8 +14,6 @@ export default function ContextMenu() {
   const [pos, setPos] = useState({ x: 0, y: 0 });
   const [toast, setToast] = useState<string | null>(null);
   const toastTimer = useRef(0);
-  const [cookieModal, setCookieModal] = useState(false);
-  const [cookieRun, setCookieRun] = useState(0); // key so the drop can re-trigger
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -34,10 +32,7 @@ export default function ContextMenu() {
     };
     const close = () => setOpen(false);
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setOpen(false);
-        setCookieModal(false);
-      }
+      if (e.key === 'Escape') setOpen(false);
     };
     window.addEventListener('contextmenu', onCtx);
     window.addEventListener('click', close);
@@ -70,7 +65,7 @@ export default function ContextMenu() {
       },
     },
     { label: 'Back to top', run: () => window.scrollTo({ top: 0, behavior: 'smooth' }) },
-    { label: 'Cookies?', run: () => setCookieModal(true) },
+    { label: 'Cookies?', run: openCookieSettings },
     'divider',
     { label: 'View source on GitHub', run: () => window.open('https://github.com/Nick-Trigger/Portfolio-Websites', '_blank', 'noopener') },
   ];
@@ -108,41 +103,6 @@ export default function ContextMenu() {
           </div>,
           document.body,
         )}
-
-      {cookieModal &&
-        createPortal(
-          <div
-            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 p-4"
-            onClick={() => setCookieModal(false)}
-            onContextMenu={(e) => e.preventDefault()}
-          >
-            <div
-              role="dialog"
-              aria-modal="true"
-              aria-label="Cookies"
-              className="w-full max-w-sm rounded-box bg-base-100 p-6 shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <h2 className="mb-2 text-lg font-bold">Cookies? 🍪</h2>
-              <p className="mb-6 text-sm">This website does not use cookies.</p>
-              <div className="flex justify-end">
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={() => {
-                    setCookieModal(false);
-                    setCookieRun(Date.now());
-                  }}
-                >
-                  OK
-                </button>
-              </div>
-            </div>
-          </div>,
-          document.body,
-        )}
-
-      {cookieRun > 0 && <CookieDrop key={cookieRun} onDone={() => setCookieRun(0)} />}
 
       {toast &&
         createPortal(

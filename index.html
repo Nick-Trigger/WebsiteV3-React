@@ -19,6 +19,52 @@
         document.documentElement.setAttribute('data-theme', theme);
       })();
     </script>
+    <!--
+      Cookie consent, resolved before Clarity can set anything. Visitors in
+      regions that require opt-in consent (EEA, UK, Switzerland) default to
+      denied; everyone else defaults to granted. A choice the visitor made
+      themselves always wins. The result is left on window.__cookieConsent for
+      the UI in src/consent.ts.
+    -->
+    <script>
+      (function () {
+        // Location comes from the browser's own time zone — no geo lookup, no
+        // extra request. Every Europe/* zone counts as restricted, which keeps
+        // the check short and errs toward asking rather than assuming; these
+        // extras cover the EEA territories that sit outside that prefix.
+        var RESTRICTED = [
+          'Asia/Nicosia', 'Asia/Famagusta',          // Cyprus
+          'Atlantic/Reykjavik',                      // Iceland
+          'Atlantic/Canary', 'Africa/Ceuta',         // Spain
+          'Atlantic/Madeira', 'Atlantic/Azores',     // Portugal
+          'Atlantic/Faroe',                          // Faroe Islands
+          'Indian/Reunion', 'Indian/Mayotte',        // France
+          'America/Martinique', 'America/Guadeloupe', 'America/Cayenne',
+        ];
+
+        var restricted = true; // if we can't tell, assume consent is needed
+        try {
+          var tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+          if (tz) restricted = tz.indexOf('Europe/') === 0 || RESTRICTED.indexOf(tz) !== -1;
+        } catch (e) {
+          // no Intl / blocked — keep the safe default
+        }
+
+        var saved = null;
+        try {
+          saved = localStorage.getItem('cookie-consent');
+        } catch (e) {
+          // storage disabled
+        }
+        if (saved !== 'granted' && saved !== 'denied') saved = null;
+
+        window.__cookieConsent = {
+          state: saved || (restricted ? 'denied' : 'granted'),
+          explicit: saved !== null,
+          restricted: restricted,
+        };
+      })();
+    </script>
     <!-- Microsoft Clarity analytics -->
     <script type="text/javascript">
       (function(c,l,a,r,i,t,y){
@@ -26,6 +72,13 @@
         t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
       })(window, document, "clarity", "script", "xgwhui4h8n");
+      // Queued on the stub so it is the first thing the tag processes once it
+      // loads, i.e. before any cookie is written. ad_Storage stays denied: this
+      // site runs no ads and shares nothing with Microsoft Ads.
+      window.clarity("consentv2", {
+        ad_Storage: "denied",
+        analytics_Storage: window.__cookieConsent.state,
+      });
     </script>
   </head>
   <body>
