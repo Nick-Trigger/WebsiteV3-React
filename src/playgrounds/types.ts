@@ -24,11 +24,6 @@ export const MAX_IMAGES_PER_RUN = 6;
 /** Max size of one relayed image (base64 characters). */
 export const MAX_IMAGE_CHARS = 4_000_000;
 
-/**
- * Image formats the worker may relay. SVG is rendered through an <img> data
- * URI, which browsers load in "secure static mode" — scripts and external
- * references inside the document never run.
- */
 export type ImageMime = 'image/png' | 'image/svg+xml';
 
 /**

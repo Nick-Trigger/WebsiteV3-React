@@ -1,39 +1,11 @@
-"""Hardening applied to the Python sandbox before any user code runs.
-
-IMPORTANT — what this is and is not:
-
-This module is *hygiene*, not the security boundary. The boundary is the Web
-Worker (no DOM, no page state, no cookies) wrapping a WebAssembly VM with a
-CDN-only fetch allowlist and a hard kill-timeout on the main thread. Code
-running here cannot reach the page or the network regardless of what this
-module does, and a determined caller can work around the patches below from
-inside Python. They exist to stop casual misuse and — more usefully — to keep
-a program from wrecking the interpreter that later runs in the same session.
-
-Two things are enforced:
-
-1. ``exec`` / ``eval`` / ``compile`` are refused when called from user code.
-   The check is caller-based rather than a blanket removal, because Pyodide
-   itself compiles and execs the submitted program, and stdlib machinery like
-   ``dataclasses`` and ``collections.namedtuple`` build classes with ``exec``.
-   Those callers live in their own modules and keep working; only calls made
-   from ``__main__`` (the program in the editor) are rejected.
-
-2. Destructive filesystem calls are refused for the directories that hold the
-   interpreter itself. The virtual filesystem is per-tab and in-memory, so
-   this is not about protecting the visitor's machine — it is about a program
-   not being able to delete ``/lib/python3.14`` and leave every later run in
-   the session broken. The working directory stays fully writable so that
-   ordinary file I/O still works.
-"""
-
+# Guardrails for the playground's Python interpreter
 import builtins
 import os
 import shutil
 import sys
 
 # Directories holding the interpreter and the playground's own modules.
-# Everything else — notably /home/pyodide (the working directory) and /tmp —
+# Everything else notably /home/pyodide (the working directory) and /tmp
 # stays writable.
 _PROTECTED_PREFIXES = ("/lib", "/usr", "/bin", "/sbin", "/proc", "/dev")
 
@@ -92,7 +64,7 @@ def _is_protected(path):
 
 def _refuse(path):
     raise SandboxError(
-        "Writing to %s is disabled — that directory holds the Python "
+        "Writing to %s is disabled. That directory holds the Python "
         "interpreter itself. Your working directory is writable, so use a "
         "relative path such as 'data.txt' instead." % path
     )

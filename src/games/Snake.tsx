@@ -149,7 +149,7 @@ export default function Snake() {
         try {
           localStorage.setItem(BEST_KEY, String(bestRef.current));
         } catch {
-          /* storage unavailable — ignore */
+          /* storage unavailable. ignore */
         }
       }
       return;
@@ -190,7 +190,7 @@ export default function Snake() {
         setBest(stored);
       }
     } catch {
-      /* storage unavailable — ignore */
+      /* storage unavailable. ignore */
     }
     reset();
   }, [reset]);

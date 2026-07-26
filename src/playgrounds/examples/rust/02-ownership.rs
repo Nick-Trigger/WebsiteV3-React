@@ -1,5 +1,3 @@
-// Ownership and pattern matching — the two ideas at the heart of Rust.
-
 #[derive(Debug)]
 enum Shape {
     Circle { radius: f64 },
@@ -7,7 +5,7 @@ enum Shape {
 }
 
 fn area(shape: &Shape) -> f64 {
-    // `match` must handle every variant — the compiler checks.
+    // `match` must handle every variant.
     match shape {
         Shape::Circle { radius } => std::f64::consts::PI * radius * radius,
         Shape::Rectangle { width, height } => width * height,
@@ -20,7 +18,6 @@ fn main() {
         Shape::Rectangle { width: 3.0, height: 4.0 },
     ];
 
-    // `&shapes` borrows the vec; ownership stays here, no copies made.
     for shape in &shapes {
         println!("{shape:?} has area {:.2}", area(shape));
     }

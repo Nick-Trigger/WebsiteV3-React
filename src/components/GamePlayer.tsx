@@ -11,7 +11,7 @@ interface GamePlayerProps {
   /** Readout chips shown above the screen (score, best, level, …). */
   stats?: GameStat[];
   /**
-   * The play area — a canvas, a board, etc. The screen wrapper is positioned
+   * The play area: a canvas, a board, etc. The screen wrapper is positioned
    * `relative`, so a game can absolutely-position overlays (start / game over)
    * over it simply by rendering them as siblings of the play area.
    */
@@ -24,7 +24,7 @@ interface GamePlayerProps {
 
 /**
  * The handheld "game player" chassis: an orange shell wrapping three reusable,
- * independently-addressable regions — the score readout, the screen, and the
+ * independently-addressable regions: the score readout, the screen, and the
  * controls. Any game drops its own screen content in as children and supplies
  * its own stats + controls, so the look stays consistent across games while the
  * gameplay is fully swappable.

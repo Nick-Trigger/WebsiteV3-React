@@ -3,7 +3,7 @@
 // GitHub Pages deploy; it reads the LIVE sitemap so it always submits exactly
 // what is deployed. Safe to run manually: `npm run indexnow`.
 //
-// The key is public by design — IndexNow verifies ownership by fetching
+// The key is public by design... IndexNow verifies ownership by fetching
 // https://<host>/<key>.txt, which must be world-readable.
 
 const HOST = 'nicholastrigger.com';
@@ -11,7 +11,7 @@ const KEY = 'ba7c9bb761b04533bf968ebee4297743';
 const KEY_LOCATION = `https://${HOST}/${KEY}.txt`;
 
 // Uses process.exitCode (not process.exit) so Node can wind down its network
-// handles cleanly — exit() mid-fetch trips a libuv assertion on Windows.
+// handles cleanly, exit() mid-fetch trips a libuv assertion on Windows.
 async function main() {
   // 1. The key file must be live, otherwise submissions are silently invalid.
   const keyRes = await fetch(KEY_LOCATION);
@@ -39,7 +39,7 @@ async function main() {
     body: JSON.stringify({ host: HOST, key: KEY, keyLocation: KEY_LOCATION, urlList }),
   });
 
-  // 200 = submitted, 202 = accepted (key validation pending) — both are success.
+  // 200 = submitted, 202 = accepted (key validation pending), both are success.
   if (res.status === 200 || res.status === 202) {
     console.log(`indexnow: submitted ${urlList.length} URLs (HTTP ${res.status})`);
     return 0;

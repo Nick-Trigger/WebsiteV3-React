@@ -202,7 +202,7 @@ export default function Game2048() {
           try {
             localStorage.setItem(BEST_KEY, String(bestRef.current));
           } catch {
-            /* storage unavailable — ignore */
+            /* storage unavailable. ignore */
           }
         }
       }
@@ -229,7 +229,7 @@ export default function Game2048() {
         setBest(b);
       }
     } catch {
-      /* storage unavailable — ignore */
+      /* storage unavailable. ignore */
     }
     start();
   }, [start]);

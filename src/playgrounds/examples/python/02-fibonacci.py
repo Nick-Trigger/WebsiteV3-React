@@ -13,3 +13,4 @@ print(", ".join(str(next(fib)) for _ in range(15)))
 import itertools
 pairs = list(itertools.islice(fibonacci(), 30, 32))
 print(f"\nGolden ratio approximation: {pairs[1] / pairs[0]:.10f}")
+s

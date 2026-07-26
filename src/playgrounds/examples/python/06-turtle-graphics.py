@@ -4,7 +4,7 @@
 import turtle
 
 t = turtle.Turtle()
-t.speed(0)          # accepted and ignored — there is no animation to speed up
+t.speed(0)
 t.pensize(2)
 
 colors = ["crimson", "orange", "gold", "seagreen", "steelblue", "purple"]

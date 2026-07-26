@@ -17,8 +17,8 @@ const SELL_RATE = 0.7;
 const MAX_LEVEL = 3;
 
 // Deterministic PRNG (mulberry32). The generator is re-seeded with the same
-// value at the start of every run, so enemy composition — the only random
-// element — plays out identically each game.
+// value at the start of every run, so enemy composition (the only random
+// element) plays out identically each game.
 const RNG_SEED = 0x51ab1e;
 const makeRng = (seed: number) => {
   let s = seed >>> 0;
@@ -30,8 +30,7 @@ const makeRng = (seed: number) => {
   };
 };
 
-// Difficulty ramps linearly through wave 5, then compounds gently — roughly
-// +12% HP, +2% speed (capped at 1.5x), and +5% reward per wave past 5.
+// Difficulty ramps linearly through wave 5, then compounds gently
 const LATE_WAVE = 5;
 const hpScale = (wave: number) => (wave > LATE_WAVE ? Math.pow(1.12, wave - LATE_WAVE) : 1);
 const speedScale = (wave: number) =>

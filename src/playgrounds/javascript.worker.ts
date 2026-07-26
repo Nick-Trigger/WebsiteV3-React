@@ -1,7 +1,7 @@
 /// <reference lib="webworker" />
 /**
  * JavaScript playground worker. User code does NOT run in this worker's own
- * JS engine — it runs inside QuickJS compiled to WebAssembly, a completely
+ * JS engine; it runs inside QuickJS compiled to WebAssembly, a completely
  * separate VM with its own heap. The VM starts empty: no fetch, no DOM, no
  * timers, no host objects at all except the console shim defined below.
  *
@@ -87,10 +87,6 @@ function formatValue(ctx: QuickJSContext, handle: QuickJSHandle): string {
  * cannot reach the page or the network, so `eval` could not have escaped
  * anything either way.
  *
- * The `Function` constructor is deliberately left alone. It is the same
- * capability as `eval`, but blocking it buys nothing — `(() => {}).constructor`
- * hands it straight back — while shadowing a builtin that ordinary code
- * legitimately touches.
  */
 const HARDEN_PRELUDE = `
 (function () {

@@ -1,11 +1,16 @@
-// A classic first program — with iterators doing the work.
+// Hello User!
+// This is a simple Rust program. No Rust compiler runs inside a browser, so this code
+// is sent over HTTPS to the Compiler Explorer sandbox (godbolt.org), compiled there
+// with rustc, and only the text output comes back, nothing runs on your machine.
+// Because the code does leave your machine, DO NOT PASTE ANYTHING PRIVATE IN HERE.
+// You can edit this code, try an example above, or write your own Rust code in the editor below.
+
 fn main() {
-    println!("Hello from Rust!\n");
+    println!("Hello from Rust, compiled on a remote sandbox!");
+    println!("Architecture: {}", std::env::consts::ARCH);
+    println!("Operating system: {}", std::env::consts::OS);
 
-    let sum_of_squares: u32 = (1..=10).map(|n| n * n).sum();
-    println!("1² + 2² + … + 10² = {sum_of_squares}");
-
-    let words = ["safe", "fast", "fearless"];
-    let sentence = words.join(", ");
-    println!("Rust is: {sentence}");
+    // Iterators are the idiomatic way to work with sequences:
+    let squares: Vec<u32> = (1..=5).map(|n| n * n).collect();
+    println!("Squares: {squares:?}");
 }

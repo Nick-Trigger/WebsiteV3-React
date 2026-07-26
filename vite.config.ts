@@ -22,7 +22,7 @@ export default defineConfig({
     react(),
     tailwindcss(),
     // Optimizes images in public/ (and bundled assets) at build time with
-    // sharp + svgo, in place — paths/filenames are unchanged.
+    // sharp + svgo, in place: paths/filenames are unchanged.
     ViteImageOptimizer({
       png: { quality: 80 },
       jpeg: { quality: 80 },

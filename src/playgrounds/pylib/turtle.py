@@ -1,24 +1,5 @@
-"""turtle — a browser-friendly stand-in for the standard library module.
-
-CPython's ``turtle`` drives a Tk canvas, and Pyodide ships no Tcl/Tk, so
-``import turtle`` normally fails with ModuleNotFoundError in the browser.
-This module implements the same classic API in pure Python: instead of
-animating a canvas it records every stroke and renders the finished picture
-as an SVG image, which the playground displays beneath the program's output.
-
-Differences from the standard module:
-  * Drawing is not animated. The completed picture appears when the program
-    finishes; ``speed()``, ``delay()``, ``tracer()`` and ``update()`` are
-    accepted and ignored.
-  * ``done()``, ``mainloop()`` and ``exitonclick()`` return immediately.
-  * There is no event loop, so ``onkey``, ``onclick``, ``ontimer`` and
-    friends accept their arguments and do nothing.
-  * ``undo()`` is not supported (the stroke history is append-only).
-
-Everything else — pen state, fills, ``circle()``, ``dot()``, ``stamp()``,
-``write()``, multiple ``Turtle()`` instances, ``Screen()`` — behaves as you
-would expect.
-"""
+# A turtle graphics implementation that records drawing commands and renders them as an SVG image.
+# Specifically designed for use in browser sandboxes where tkinter is not available.
 
 import math
 import re

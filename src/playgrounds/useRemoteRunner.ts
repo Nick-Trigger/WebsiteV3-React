@@ -11,7 +11,7 @@ import type { RunnerHandle, RunnerState } from './runnerTypes';
  * Remote execution backend for compiled languages (C, C++, Rust) that have no
  * practical in-browser toolchain. Code is POSTed over HTTPS to the public
  * Compiler Explorer API (godbolt.org), compiled and executed inside its
- * sandbox, and ONLY text output comes back — nothing executes in the
+ * sandbox, and ONLY text output comes back so that nothing executes in the
  * visitor's browser or on this site.
  *
  * (The Piston public API would have been the alternative, but it went

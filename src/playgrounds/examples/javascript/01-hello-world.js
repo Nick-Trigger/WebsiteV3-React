@@ -1,6 +1,12 @@
-// Your code runs inside QuickJS — a separate JavaScript VM compiled to
-// WebAssembly. It has no access to this page, the DOM, or the network.
-console.log("Hello from a sandboxed JavaScript VM!");
+// Hello User!
+// This is a simple JavaScript program that runs entirely in your browser, inside a
+// QuickJS virtual machine compiled to WebAssembly, not in the page itself.
+// You can edit this code, try an example above, or write your own JavaScript code here in the editor.
 
-const facts = ["no DOM", "no fetch", "no cookies", "just the language"];
-console.log("In here there is:", facts.join(", "));
+console.log("Hello from JavaScript running entirely in your browser!");
+
+// The VM is the bare language. Every ECMAScript builtin is here, but there is
+// no browser wrapped around it, so none of these exist:
+console.log("typeof window:  ", typeof window);
+console.log("typeof document:", typeof document);
+console.log("typeof fetch:   ", typeof fetch);

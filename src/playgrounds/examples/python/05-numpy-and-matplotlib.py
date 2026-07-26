@@ -1,7 +1,6 @@
 # numpy and matplotlib are downloaded automatically on first use
-# (from the Pyodide CDN — the first run takes a few extra seconds).
-# Figures appear below the output. GUI modules like turtle/tkinter
-# are not available in the browser.
+# (from the Pyodide CDN the first run takes a few extra seconds).
+
 import numpy as np
 import matplotlib.pyplot as plt
 

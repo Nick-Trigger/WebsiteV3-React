@@ -10,7 +10,7 @@ export default function PlaygroundsIndex() {
   return (
     <BaseLayout
       title="Nicholas Trigger - Code Playgrounds"
-      description="Interactive code playgrounds — write and run code in a sandboxed environment, right in your browser."
+      description="Interactive code playgrounds. Evaluate Python, JavaScript, C, C++, and Rust code directly in your browser."
     >
       <div className="flex items-baseline gap-2 mb-2">
         <h1 className="text-3xl font-bold">Code Playgrounds</h1>
@@ -18,9 +18,9 @@ export default function PlaygroundsIndex() {
       </div>
       <p className="text-base-content/70 mb-5">
         Write and run code right from this page. Python and JavaScript execute entirely in your
-        browser inside sandboxed WebAssembly virtual machines — nothing you run can touch this
-        site or your data. Compiled languages (C, C++, Rust) are built and run on the public
-        Compiler Explorer sandbox (godbolt.org), with only text output coming back.
+        browser inside sandboxed WebAssembly virtual machines. Compiled languages (C, C++, Rust) 
+        are built and run on the public Compiler Explorer sandbox (godbolt.org), with only text 
+        output coming back.
       </p>
 
       <div>

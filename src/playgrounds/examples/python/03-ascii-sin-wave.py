@@ -1,4 +1,3 @@
-# No graphics needed — draw with math and characters.
 import math
 
 WIDTH, HEIGHT = 60, 22

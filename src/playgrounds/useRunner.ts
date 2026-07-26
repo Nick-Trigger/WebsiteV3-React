@@ -20,7 +20,7 @@ import type { RunnerHandle, RunnerState } from './runnerTypes';
  *    (15s for execution; up to 60s while the Python worker downloads
  *    packages from the pinned CDN);
  *  - a Stop button doing the same on demand;
- *  - output/image caps (defense in depth — the worker also truncates);
+ *  - output/image caps (defense in depth. the worker also truncates);
  *  - minimum interval between runs;
  *  - program size cap.
  *
@@ -190,8 +190,7 @@ export function useRunner(createWorker: () => Worker): RunnerHandle {
 
   /**
    * Discard the interpreter entirely. The worker is rebuilt on the next run,
-   * so anything a previous program broke inside it — deleted modules,
-   * monkeypatched builtins, exhausted memory — is gone.
+   * so anything a previous program broke inside it is gone.
    */
   const restart = useCallback(() => {
     killWorker('Runtime restarted. The next run starts from a clean interpreter.\n');

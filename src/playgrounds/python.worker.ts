@@ -7,7 +7,7 @@
  *  - Runs in a Web Worker: no DOM, no cookies/localStorage of the page.
  *  - Code executes inside the WASM VM against a virtual in-memory filesystem.
  *  - After the runtime loads, `fetch` is replaced with a wrapper that ONLY
- *    accepts URLs under the pinned Pyodide CDN — that lets `import numpy`
+ *    accepts URLs under the pinned Pyodide CDN, that lets `import numpy`
  *    pull the browser-built wheel on demand while blocking every other
  *    network destination. All other network APIs are removed outright.
  *  - `postMessage` is captured and removed from the global, so Python code
@@ -172,7 +172,7 @@ const pyodideReady: Promise<Pyodide> = (async () => {
   pyodide.setStdout({ batched: (line) => emit('stdout', line + '\n') });
   pyodide.setStderr({ batched: (line) => emit('stderr', line + '\n') });
   bootstrapRuntime(pyodide);
-  // The runtime is up — lock the global down before any user code runs.
+  // The runtime is up: lock the global down before any user code runs.
   restrictGlobals();
   post({ type: 'ready' });
   return pyodide;

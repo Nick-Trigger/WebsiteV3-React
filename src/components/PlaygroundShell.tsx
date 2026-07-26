@@ -32,7 +32,7 @@ const StopIcon = () => (
 /**
  * The interactive part of every playground page: editor, controls, and
  * output. Output is rendered exclusively as React text nodes inside a <pre>
- * — never as HTML — so nothing a program prints can inject markup into the
+ * , never as HTML, so nothing a program prints can inject markup into the
  * page.
  */
 export default function PlaygroundShell({

@@ -16,7 +16,7 @@ export interface RunnerHandle {
   clear: () => void;
   /**
    * Throw away the current interpreter and start a clean one. Only backends
-   * that keep state between runs provide this — remote runners are stateless,
+   * that keep state between runs provide this feature. Remote runners are stateless,
    * so the control is hidden for them.
    */
   restart?: () => void;

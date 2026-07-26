@@ -1,17 +1,9 @@
 /**
  * Auto-discovered playground examples.
  *
- * Drop a file into src/playgrounds/examples/<language>/ and it appears in
- * that playground's Examples menu automatically — IF it is valid:
- *   - the extension matches the language (.py for python, .js for javascript);
- *   - the filename is plain (letters, digits, dashes, underscores only);
- *   - the file is non-empty and at most MAX_EXAMPLE_CHARS characters.
- * Invalid files are skipped with a console warning instead of breaking the
- * page. Files are bundled AS TEXT at build time (`?raw`) — they are never
- * imported as modules and never executed unless a visitor presses Run.
- *
  * Naming: an optional numeric prefix orders the menu and is stripped from the
  * title, e.g. `01-hello-world.py` → “Hello World”.
+ * 
  */
 
 export interface PlaygroundExample {
@@ -83,13 +75,31 @@ function buildExamples(
     });
 }
 
-export const examplesByLanguage: Record<
-  'python' | 'javascript' | 'c' | 'cpp' | 'rust',
-  PlaygroundExample[]
-> = {
+export type PlaygroundLanguage = 'python' | 'javascript' | 'c' | 'cpp' | 'rust';
+
+export const examplesByLanguage: Record<PlaygroundLanguage, PlaygroundExample[]> = {
   python: buildExamples(pythonFiles, 'py'),
   javascript: buildExamples(javascriptFiles, 'js'),
   c: buildExamples(cFiles, 'c'),
   cpp: buildExamples(cppFiles, 'cpp'),
   rust: buildExamples(rustFiles, 'rs'),
 };
+
+/** Title of the example every playground opens with. */
+const DEFAULT_EXAMPLE_TITLE = 'Hello World';
+
+/**
+ * The code a playground starts with and returns to when you press Reset.
+ *
+ * It is simply the "Hello World" entry from that language's examples, so the
+ * starting program and the menu entry can never drift apart, and editing the
+ * example file is all it takes to change what visitors first see. The example
+ * stays listed in the menu as normal. Falls back to the first example if a
+ * language has no Hello World.
+ */
+export function defaultCodeFor(language: PlaygroundLanguage): string {
+  const available = examplesByLanguage[language];
+  const start =
+    available.find((example) => example.title === DEFAULT_EXAMPLE_TITLE) ?? available[0];
+  return start?.code ?? '';
+}
