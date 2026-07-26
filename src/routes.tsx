@@ -21,6 +21,9 @@ import FastApiReactStarter from './pages/projects/FastApiReactStarter';
 import GamesIndex from './pages/GamesIndex';
 import GameLayout from './components/GameLayout';
 import { games } from './data/games';
+import PlaygroundsIndex from './pages/PlaygroundsIndex';
+import PlaygroundLayout from './components/PlaygroundLayout';
+import { playgrounds } from './data/playgrounds';
 
 export const routes: RouteRecord[] = [
   { path: '/', element: <Home /> },
@@ -45,6 +48,12 @@ export const routes: RouteRecord[] = [
   ...games.map((game) => ({
     path: `projects/games/${game.slug}`,
     element: <GameLayout game={game} />,
+  })),
+  // Code playgrounds
+  { path: 'projects/playgrounds', element: <PlaygroundsIndex /> },
+  ...playgrounds.map((playground) => ({
+    path: `projects/playgrounds/${playground.slug}`,
+    element: <PlaygroundLayout playground={playground} />,
   })),
 
   // Prerendered so GitHub Pages can serve it as 404.html (see scripts/postbuild.mjs).

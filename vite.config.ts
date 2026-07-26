@@ -13,11 +13,16 @@ export default defineConfig({
   server: {
     port: Number(process.env.PORT) || 5173,
   },
+  // The playground sandbox workers (src/playgrounds/*.worker.ts) use dynamic
+  // imports, which the default 'iife' worker format can't bundle.
+  worker: {
+    format: 'es',
+  },
   plugins: [
     react(),
     tailwindcss(),
     // Optimizes images in public/ (and bundled assets) at build time with
-    // sharp + svgo, in place — paths/filenames are unchanged.
+    // sharp + svgo, in place: paths/filenames are unchanged.
     ViteImageOptimizer({
       png: { quality: 80 },
       jpeg: { quality: 80 },

@@ -107,7 +107,7 @@ export const games: Game[] = [
     description: 'Rearrange the tiles to form a complete picture.',
     tags: ['NEW', 'Puzzle'],
     instructions: [
-      'Click a tile next to the empty space to slide it — or drag it into the gap',
+      'Click a tile next to the empty space to slide it, or click and drag it into the gap',
       'Pick a difficulty from 3×3 up to 6×6',
       'Try to arrange all tiles in numerical order',
       'The fewer moves you make, the better your score!',

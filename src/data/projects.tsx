@@ -1,5 +1,13 @@
 import type { ComponentType } from 'react';
 import GameThumbnail from '../components/GameThumbnail';
+import { PythonLogo, JavaScriptLogo } from '../components/LanguageLogo';
+
+const PlaygroundThumbnail = () => (
+  <div className="flex items-center justify-center gap-5 w-full h-full bg-base-200">
+    <PythonLogo className="w-14 h-14" />
+    <JavaScriptLogo className="w-14 h-14" />
+  </div>
+);
 
 export interface Project {
   title: string;
@@ -31,6 +39,14 @@ export const projects: Project[] = [
     desc: 'A small collection of playable browser games built as self-contained React components.',
     url: '/projects/games',
     tags: ['Interactive', 'React'],
+    featured: true,
+  },
+  {
+    title: 'Code Playgrounds',
+    Media: PlaygroundThumbnail,
+    desc: 'Write and run Python, JavaScript, C, C++, and Rust from the browser. Python and JavaScript execute in sandboxed WebAssembly VMs in a Web Worker; compiled languages run on a remote sandbox service.',
+    url: '/projects/playgrounds',
+    tags: ['Interactive', 'React', 'Python'],
     featured: true,
   },
   {

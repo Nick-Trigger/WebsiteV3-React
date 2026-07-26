@@ -14,10 +14,9 @@ export default function FastApiReactStarter() {
 
       <p>
         Starting a new full-stack project usually means an afternoon of plumbing: wiring CORS,
-        getting migrations to find your models, teaching your settings loader about{' '}
-        <code>.env</code> files, and remembering the exact incantation to boot three services at
-        once. This template packages all of that as a GitHub template repository — click{' '}
-        <strong>"Use this template"</strong>, rename a placeholder, and start writing features.
+        getting migrations to find your models, teaching your settings loader about it's environment variables,
+        and remembering the exact incantation to boot three services at
+        once. This template packages all of that as a GitHub template repository.
       </p>
 
       <h3>What's included</h3>
@@ -80,8 +79,7 @@ export default function FastApiReactStarter() {
         </li>
         <li>
           <strong>Disposable local database.</strong> <code>reset_db.ps1</code> drops the Postgres
-          volume and re-applies every migration from scratch — the escape hatch for bad seed data
-          or a half-applied migration.
+          volume and re-applies every migration from scratch.
         </li>
       </ul>
 
@@ -94,8 +92,8 @@ export default function FastApiReactStarter() {
         FastAPI backend (with Swagger UI at <code>/docs</code>) and the Vite frontend each in their
         own Windows Terminal tab. The README documents first-time setup, common tasks (adding
         dependencies, creating migrations, running <code>pytest</code>), a renaming checklist for
-        rebranding the <code>planner</code> placeholder, and a troubleshooting section covering the
-        Windows papercuts that actually bite — stale PATHs, Pylance interpreter selection, and
+        rebranding the <code>planner</code> placeholder, and a troubleshooting section covering 
+        Windows nuances like stale PATHs, Pylance interpreter selection, and
         Notepad's infamous <code>.env.txt</code>.
       </p>
 
