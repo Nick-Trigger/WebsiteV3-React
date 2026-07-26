@@ -23,7 +23,7 @@ export default function TimeLine({ title, subtitle, buttonLink, separator, child
           {separator && <span className="ml-2">{`\u00A0${separator}\u00A0`}</span>}
           {subtitle && <span className="ml-2">{`\u00A0${subtitle}\u00A0`}</span>}
         </span>
-        {children && <div className="my-2 text-justify">{children}</div>}
+        {children && <div className="my-2">{children}</div>}
       </div>
     </div>
   );

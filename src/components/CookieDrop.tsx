@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { RefObject } from 'react';
 import { createPortal } from 'react-dom';
+import { useConsent } from '../consent';
 
 // Same physics feel as BouncyHeadshot, but free-floating: cookies rain from the
 // top of the viewport, bounce around, can be grabbed and flung, and after a few
@@ -28,13 +29,15 @@ interface CookieBody {
 function BouncyCookie({
   index,
   bodies,
+  crossed,
   onGone,
 }: {
   index: number;
   bodies: Set<CookieBody>;
+  crossed: boolean;
   onGone: () => void;
 }) {
-  const imgRef = useRef<HTMLImageElement | null>(null);
+  const elRef = useRef<HTMLDivElement | null>(null);
 
   const pos = useRef({
     x: Math.random() * Math.max(1, window.innerWidth - SIZE),
@@ -53,7 +56,7 @@ function BouncyCookie({
   const goneRef = useRef(false);
 
   const applyTransform = useCallback((scale = 1) => {
-    const el = imgRef.current;
+    const el = elRef.current;
     if (el)
       el.style.transform = `translate3d(${pos.current.x}px, ${pos.current.y}px, 0) rotate(${angle.current}deg) scale(${scale})`;
   }, []);
@@ -226,15 +229,9 @@ function BouncyCookie({
   }, [step, onMove, onUp, bodies, index]);
 
   return createPortal(
-    <img
-      ref={imgRef}
-      src="/cookie.svg"
-      alt=""
+    <div
+      ref={elRef}
       aria-hidden="true"
-      width={SIZE}
-      height={SIZE}
-      draggable={false}
-      onDragStart={(e) => e.preventDefault()}
       onPointerDown={onDown}
       style={{
         width: SIZE,
@@ -242,7 +239,31 @@ function BouncyCookie({
         transform: `translate3d(${pos.current.x}px, ${pos.current.y}px, 0) rotate(${angle.current}deg)`,
       }}
       className="fixed top-0 left-0 z-[9999] cursor-grab active:cursor-grabbing select-none touch-none will-change-transform drop-shadow-lg"
-    />,
+    >
+      <img
+        src="/cookie.svg"
+        alt=""
+        width={SIZE}
+        height={SIZE}
+        draggable={false}
+        onDragStart={(e) => e.preventDefault()}
+        className="w-full h-full"
+      />
+      {/* Cookies are off, so the ones raining down get struck out. */}
+      {crossed && (
+        <svg
+          viewBox="0 0 24 24"
+          className="absolute inset-0 w-full h-full"
+          fill="none"
+          stroke="#ef4444"
+          strokeWidth="3"
+          strokeLinecap="round"
+        >
+          <path d="M5 5 L19 19" />
+          <path d="M19 5 L5 19" />
+        </svg>
+      )}
+    </div>,
     document.body,
   );
 }
@@ -253,6 +274,7 @@ export default function CookieDrop({ count = 5, onDone }: { count?: number; onDo
   const [alive, setAlive] = useState(() => Array.from({ length: count }, (_, i) => i));
   // Shared physics registry so the cookies can collide with each other.
   const bodies = useRef<Set<CookieBody>>(new Set());
+  const consent = useConsent();
 
   useEffect(() => {
     if (alive.length === 0) onDone();
@@ -265,6 +287,7 @@ export default function CookieDrop({ count = 5, onDone }: { count?: number; onDo
           key={i}
           index={i}
           bodies={bodies.current}
+          crossed={consent.state === 'denied'}
           onGone={() => setAlive((a) => a.filter((x) => x !== i))}
         />
       ))}
