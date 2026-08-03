@@ -3,6 +3,7 @@ import type { RouteRecord } from 'vite-react-ssg';
 import Home from './pages/Home';
 import Projects from './pages/Projects';
 import Cv from './pages/Cv';
+import Resume from './pages/ResumeViewer';
 import NotFound from './pages/NotFound';
 
 import Arm from './pages/projects/Arm';
@@ -29,6 +30,7 @@ export const routes: RouteRecord[] = [
   { path: '/', element: <Home /> },
   { path: 'projects', element: <Projects /> },
   { path: 'cv', element: <Cv /> },
+  { path: '/resume', element: <Resume /> },
 
   { path: 'projects/arm', element: <Arm /> },
   { path: 'projects/arm/application', element: <ArmApplication /> },

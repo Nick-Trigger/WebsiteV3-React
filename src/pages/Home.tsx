@@ -44,10 +44,10 @@ export default function Home() {
             Let's Connect!
           </a>
           <a
-            href="https://duke.box.com/s/g4uf97sq9jq5zdsoe0rsb8g2djkvfpm2"
+            // href="https://duke.box.com/s/g4uf97sq9jq5zdsoe0rsb8g2djkvfpm2"
+            href="/resume"
             className="btn align-center"
             target="_blank"
-            rel="noopener noreferrer"
           >
             Resume
             <svg

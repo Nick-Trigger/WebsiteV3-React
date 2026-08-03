@@ -29,22 +29,22 @@ export default function Arm() {
 
       <div className="not-prose grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
         <div className="stat bg-base-300 rounded-xl p-4 shadow">
-          <div className="stat-title text-xs text-base-content">BOM Cost</div>
+          <div className="stat-title text-xs text-base-content"><strong>BOM Cost</strong></div>
           <div className="stat-value text-2xl text-primary">~$190</div>
           <div className="stat-desc text-base-content">Target sell: $500</div>
         </div>
         <div className="stat bg-base-300 rounded-xl p-4 shadow">
-          <div className="stat-title text-xs text-base-content">Throughput</div>
+          <div className="stat-title text-xs text-base-content"><strong>Throughput</strong></div>
           <div className="stat-value text-2xl text-secondary">50×/day</div>
           <div className="stat-desc text-base-content">Uses per day</div>
         </div>
         <div className="stat bg-base-300 rounded-xl p-4 shadow">
-          <div className="stat-title text-xs text-base-content">Skin Durability</div>
+          <div className="stat-title text-xs text-base-content"><strong>Skin Durability</strong></div>
           <div className="stat-value text-2xl text-accent">300+</div>
           <div className="stat-desc text-base-content">Punctures per wrap</div>
         </div>
         <div className="stat bg-base-300 rounded-xl p-4 shadow">
-          <div className="stat-title text-xs text-base-content">Operators</div>
+          <div className="stat-title text-xs text-base-content"><strong>Operators</strong></div>
           <div className="stat-value text-2xl text-info">1</div>
           <div className="stat-desc text-base-content">No assistant required</div>
         </div>
@@ -246,28 +246,29 @@ export default function Arm() {
       <hr />
 
       <h2>Market</h2>
-
+      
+      
       <div className="not-prose grid grid-cols-1 sm:grid-cols-3 gap-3 my-4">
-        <div className="card bg-neutral p-4 rounded-xl shadow">
-          <div className="text-xs text-base-content/60 mb-1">Total Available Market</div>
+        <div className="stat bg-base-300 rounded-xl p-4 shadow">
+          <div className="stat-title text-xs text-base-content"><strong>Total Available Market</strong></div>
           <div className="text-xl font-bold text-primary">$1.9B</div>
           <div className="text-sm text-base-content/70">
-            Medical simulation market (2021); projected $3.2–$7.7B by 2027
+            Medical simulation market (2021); projected $3.2-$7.7B by 2027
           </div>
         </div>
-        <div className="card bg-neutral p-4 rounded-xl shadow">
-          <div className="text-xs text-base-content/60 mb-1">Serviceable Available Market</div>
+        <div className="stat bg-base-300 rounded-xl p-4 shadow">
+          <div className="stat-title text-xs text-base-content"><strong>Serviceable Available Market</strong></div>
           <div className="text-xl font-bold text-secondary">~350 facilities</div>
           <div className="text-sm text-base-content/70">
             200+ medical schools and 650+ simulation labs, filtered to simulation-focused
             institutions
           </div>
         </div>
-        <div className="card bg-neutral p-4 rounded-xl shadow">
-          <div className="text-xs text-base-content/60 mb-1">Initial Target</div>
+        <div className="stat bg-base-300 rounded-xl p-4 shadow">
+          <div className="stat-title text-xs text-base-content"><strong>Initial Target</strong></div>
           <div className="text-xl font-bold text-accent">$31–47K</div>
           <div className="text-sm text-base-content/70">
-            2–3 units to 50 regional simulation labs at $500/unit
+            2-3 units to 50 regional simulation labs at $500/unit
           </div>
         </div>
       </div>

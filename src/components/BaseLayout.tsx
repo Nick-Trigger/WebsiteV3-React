@@ -12,6 +12,8 @@ interface BaseLayoutProps {
   description?: string;
   image?: string;
   includeSidebar?: boolean;
+  // allow pages to override the main/content container classes
+  contentClassName?: string;
   children: ReactNode;
 }
 
@@ -20,6 +22,7 @@ export default function BaseLayout({
   description,
   image,
   includeSidebar = true,
+  contentClassName = '',
   children,
 }: BaseLayoutProps) {
   const { pathname, hash } = useLocation();
@@ -53,7 +56,10 @@ export default function BaseLayout({
           <div className="md:flex md:justify-center">
             {/* key={pathname} replays the enter animation on each navigation;
                 the sidebar lives outside <main>, so it persists across routes. */}
-            <main key={pathname} className="page-enter p-6 pt-10 lg:max-w-[80%] max-w-[100vw]">
+            <main
+              key={pathname}
+              className={`page-enter p-6 pt-10 lg:max-w-[80%] max-w-[100vw] ${contentClassName}`}
+            >
               {children}
             </main>
           </div>
