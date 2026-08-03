@@ -57,23 +57,23 @@ export default function Clabsi() {
 
       <div className="not-prose grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
         <div className="stat bg-base-300 rounded-xl p-4 shadow">
-          <div className="stat-title text-xs text-base-content">Shutoff Time</div>
+          <div className="stat-title text-xs text-base-content"><strong>Shutoff Time</strong></div>
           <div className="stat-value text-2xl text-primary">17 ms</div>
           <div className="stat-desc text-base-content">450 ms limit (ISO 15858)</div>
         </div>
         <div className="stat bg-base-300 rounded-xl p-4 shadow">
-          <div className="stat-title text-xs text-base-content">CFU Reduction</div>
+          <div className="stat-title text-xs text-base-content"><strong>CFU Reduction</strong></div>
           <div className="stat-value text-2xl text-secondary">4-log</div>
           <div className="stat-desc text-base-content">EPA OCSPP 810.2200</div>
         </div>
         <div className="stat bg-base-300 rounded-xl p-4 shadow">
-          <div className="stat-title text-xs text-base-content">Device Weight</div>
+          <div className="stat-title text-xs text-base-content"><strong>Device Weight</strong></div>
           <div className="stat-value text-2xl text-accent">204 g</div>
           <div className="stat-desc text-base-content">One-handed operation</div>
         </div>
         <div className="stat bg-base-300 rounded-xl p-4 shadow">
-          <div className="stat-title text-xs text-base-content">UV-C Bandwidth</div>
-          <div className="stat-value text-2xl text-info">263–273 nm</div>
+          <div className="stat-title text-xs text-base-content"><strong>UV-C Bandwidth</strong></div>
+          <div className="stat-value text-2xl text-info">263-273 nm</div>
           <div className="stat-desc text-base-content">2.49 ± 0.047 mW optical</div>
         </div>
       </div>
@@ -83,7 +83,7 @@ export default function Clabsi() {
       <p>
         Central Line-Associated Bloodstream Infections (CLABSIs) occur when bacteria enter the
         bloodstream via a central line. <strong>40,000 CLABSIs occur annually</strong> in the US,
-        costing hospitals approximately <strong>$1.9B per year</strong>, and 65–70% are completely
+        causing significant morbidity and mortality, and costing hospitals approximately <strong>$1.9B per year</strong>, and 65-70% are completely
         preventable with proper disinfection.
       </p>
 
@@ -206,12 +206,6 @@ export default function Clabsi() {
         The application runs a hierarchical state machine (Zephyr SMF):
       </p>
 
-      <pre>
-        <code>{`INIT → IDLE ──► DISINFECTING ──► IDLE
-            ──► CHARGING      ──► (abort via button or interlock)
-            ──► ERROR`}</code>
-      </pre>
-
       <table>
         <thead>
           <tr>
@@ -323,22 +317,22 @@ export default function Clabsi() {
       </ul>
 
       <div className="not-prose grid grid-cols-1 sm:grid-cols-3 gap-3 my-4">
-        <div className="card bg-neutral p-4 rounded-xl shadow">
-          <div className="text-xs text-base-content/60 mb-1">Total Available Market</div>
+        <div className="stat bg-base-300 rounded-xl p-4 shadow">
+          <div className="text-xs text-base-content/60 mb-1"><strong>Total Available Market</strong></div>
           <div className="text-xl font-bold text-primary">~$1.61B</div>
           <div className="text-sm text-base-content/70">
             Global catheter-related bloodstream infection market (2024)
           </div>
         </div>
-        <div className="card bg-neutral p-4 rounded-xl shadow">
-          <div className="text-xs text-base-content/60 mb-1">Serviceable Available Market</div>
+        <div className="stat bg-base-300 rounded-xl p-4 shadow">
+          <div className="text-xs text-base-content/60 mb-1"><strong>Serviceable Available Market</strong></div>
           <div className="text-xl font-bold text-secondary">~$481M</div>
           <div className="text-sm text-base-content/70">
             US central-line infection market (minimum estimate)
           </div>
         </div>
-        <div className="card bg-neutral p-4 rounded-xl shadow">
-          <div className="text-xs text-base-content/60 mb-1">Serviceable Obtainable Market</div>
+        <div className="stat bg-base-300 rounded-xl p-4 shadow">
+          <div className="text-xs text-base-content/60 mb-1"><strong>Serviceable Obtainable Market</strong></div>
           <div className="text-xl font-bold text-accent">~$16.1M</div>
           <div className="text-sm text-base-content/70">5% of preventable CLABSIs</div>
         </div>

@@ -7,6 +7,7 @@ interface PdfViewerPageProps {
   heading: string;
   subtitle: string;
   pdfUrl: string;
+  buttonText?: string;
 }
 
 const BackArrow = () => (
@@ -49,22 +50,26 @@ export default function PdfViewerPage({
   heading,
   subtitle,
   pdfUrl,
+  buttonText,
 }: PdfViewerPageProps) {
   return (
-    <BaseLayout title={pageTitle} includeSidebar={false}>
-      <div className="flex items-center justify-between mb-8 max-w-screen-xl mx-auto px-2">
+    // remove default padding and max-width so the PDF can use the full viewport
+    <BaseLayout title={pageTitle} includeSidebar={true} contentClassName="p-0 lg:max-w-none flex flex-grow flex-col items-center">
+      <div className="flex flex-grow items-center justify-between mb-8 w-full mx-auto px-2">
         <div>
-          <Link to={backTo} className="btn btn-ghost btn-sm gap-1 -ml-2 mb-1">
-            <BackArrow />
-            Back to project
+          <Link to={backTo} className="btn btn-sm gap-1 -ml-2 mb-1">
+            {buttonText ? (
+              <>
+                <BackArrow /> {buttonText}
+              </> ) : (
+              <>
+                <BackArrow /> Back to project
+              </>
+            )}
           </Link>
-          <h1 className="text-3xl font-bold">{heading}</h1>
+          <h1 className="text-3xl w-full font-bold">{heading}</h1>
           <p className="text-base-content/60 text-sm mt-1">{subtitle}</p>
         </div>
-        <a href={pdfUrl} download className="btn btn-primary btn-sm gap-2">
-          <DownloadIcon />
-          Download PDF
-        </a>
       </div>
 
       <div className="w-full rounded-xl overflow-hidden shadow-2xl border border-base-300">

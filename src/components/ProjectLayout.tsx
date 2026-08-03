@@ -119,9 +119,9 @@ export default function ProjectLayout({
                   to={doc.url}
                   target={doc.url.startsWith('http') ? '_blank' : undefined}
                   rel={doc.url.startsWith('http') ? 'noopener noreferrer' : undefined}
-                  className="card bg-neutral shadow-md hover:shadow-xl transition-shadow border border-base-300 hover:border-primary no-underline"
+                  className="card transition-shadow no-underline"
                 >
-                  <div className="card-body p-4 gap-1">
+                  <div className="stat bg-base-300 rounded-xl p-4 shadow border border-base-300 hover:border-primary hover:shadow-xl hover:scale-[102%] transition ease-in-out">
                     <div className="flex items-center gap-2">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
