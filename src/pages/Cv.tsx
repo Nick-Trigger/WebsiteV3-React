@@ -1,89 +1,34 @@
-import BaseLayout from '../components/BaseLayout';
-import TimeLine from '../components/TimeLine';
+import BaseLayout from "../components/BaseLayout";
+import ContactButtons from "../components/ContactButtons";
+import TimeLine from "../components/TimeLine";
 
 export default function Cv() {
   return (
     <BaseLayout title="Nicholas Trigger - Curriculum Vitae">
       <div className="mb-5">
-        <div id="profile" className="text-3xl w-full font-bold">
+        <div id="profile" className="text-4xl md:text-5xl font-bold">
           Curriculum Vitae
         </div>
       </div>
 
-      <div className="mb-10">
-        Biomedical Engineering alumnus from Duke University (BSE, '26) specializing in medical
-        device R&D, with hands-on experience designing, prototyping, and validating hardware from
-        PCB-level electronics to mechanical enclosures. Comfortable across embedded systems
-        (C/C++, RTOS, ESP32) and benchtop testing under ISO/FDA-conscious development, with
-        clinical research and leadership experience that bridges engineering and real-world
-        clinical workflows. Most recently an R&D Engineer at Reselute Medical and a Classroom R&D
-        Engineer in Duke's BME department, designing and validating electronic lab hardware used
-        by students every day. Co-founder of P.A.T.S. Development, where our team built an
-        arterial line training device in collaboration with Duke Med, backed by a $5K VentureWell
-        grant and a provisional patent. Actively seeking full-time roles in medical device
-        engineering, embedded systems, or hardware R&D.
-      </div>
-
-      <div className="flex flex-wrap mb-5 gap-2 items-center self-center">
-        <a
-          href="https://duke.box.com/s/g4uf97sq9jq5zdsoe0rsb8g2djkvfpm2"
-          className="btn align-center"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Resume
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            style={{ fill: 'currentColor' }}
-          >
-            <path d="m12 16 4-5h-3V4h-2v7H8z"></path>
-            <path d="M20 18H4v-7H2v7c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2v-7h-2v7z"></path>
-          </svg>
-        </a>
-
-        <a
-          className="btn align-center"
-          href="https://www.linkedin.com/in/nick-trigger"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          LinkedIn
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            style={{ fill: 'currentColor' }}
-          >
-            <circle cx="4.983" cy="5.009" r="2.188"></circle>
-            <path d="M9.237 8.855v12.139h3.769v-6.003c0-1.584.298-3.118 2.262-3.118 1.937 0 1.961 1.811 1.961 3.218v5.904H21v-6.657c0-3.27-.704-5.783-4.526-5.783-1.835 0-3.065 1.007-3.568 1.96h-.051v-1.66H9.237zm-6.142 0H6.87v12.139H3.095z"></path>
-          </svg>
-        </a>
-
-        <a
-          className="btn align-center"
-          href="https://github.com/nick-trigger"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          GitHub
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            style={{ fill: 'currentColor' }}
-          >
-            <path
-              fillRule="evenodd"
-              clipRule="evenodd"
-              d="M12.026 2c-5.509 0-9.974 4.465-9.974 9.974 0 4.406 2.857 8.145 6.821 9.465.499.09.679-.217.679-.481 0-.237-.008-.865-.011-1.696-2.775.602-3.361-1.338-3.361-1.338-.452-1.152-1.107-1.459-1.107-1.459-.905-.619.069-.605.069-.605 1.002.07 1.527 1.028 1.527 1.028.89 1.524 2.336 1.084 2.902.829.091-.645.351-1.085.635-1.334-2.214-.251-4.542-1.107-4.542-4.93 0-1.087.389-1.979 1.024-2.675-.101-.253-.446-1.268.099-2.64 0 0 .837-.269 2.742 1.021a9.582 9.582 0 0 1 2.496-.336 9.554 9.554 0 0 1 2.496.336c1.906-1.291 2.742-1.021 2.742-1.021.545 1.372.203 2.387.099 2.64.64.696 1.024 1.587 1.024 2.675 0 3.833-2.33 4.675-4.552 4.922.355.308.675.916.675 1.846 0 1.334-.012 2.41-.012 2.737 0 .267.178.577.687.479C19.146 20.115 22 16.379 22 11.974 22 6.465 17.535 2 12.026 2z"
-            />
-          </svg>
-        </a>
+      <div className="text-lg mb-5 py-2">
+        <span className="text-lg">
+          Biomedical Engineering alumnus from Duke University (BSE, '26)
+          specializing in medical device R&D, with hands-on experience
+          designing, prototyping, and validating hardware from PCB-level
+          electronics to mechanical enclosures. Comfortable across embedded
+          systems (C/C++, RTOS, ESP32) and benchtop testing under
+          ISO/FDA-conscious development, with clinical research and leadership
+          experience that bridges engineering and real-world clinical workflows.
+          Most recently an R&D Engineer at Reselute Medical and a Classroom R&D
+          Engineer in Duke's BME department, designing and validating electronic
+          lab hardware used by students every day. Co-founder of P.A.T.S.
+          Development, where our team built an arterial line training device in
+          collaboration with Duke Med, backed by a $5K VentureWell grant and a
+          provisional patent. Actively seeking full-time roles in medical device
+          engineering, embedded systems, or hardware R&D.
+        </span>
+        <ContactButtons />
       </div>
 
       <div className="mb-5">
@@ -99,8 +44,8 @@ export default function Cv() {
         >
           <ul className="list-disc mx-6 mb-2 grid gap-0.5 text-sm">
             <li>
-              Relevant Coursework: Biomaterials, Biomechanics, Medical Device Design, Embedded
-              Medical Devices, Imaging Systems
+              Relevant Coursework: Biomaterials, Biomechanics, Medical Device
+              Design, Embedded Medical Devices, Imaging Systems
             </li>
           </ul>
         </TimeLine>
@@ -119,16 +64,16 @@ export default function Cv() {
         >
           <ul className="list-disc mx-6 mb-6 grid gap-0.5 text-sm">
             <li>
-              Designed, validated, and implemented novel bacterial testing protocols to support
-              product evaluation efforts.
+              Designed, validated, and implemented novel bacterial testing
+              protocols to support product evaluation efforts.
             </li>
             <li>
-              Conducted literature reviews and synthesized prior research to inform experimental
-              design.
+              Conducted literature reviews and synthesized prior research to
+              inform experimental design.
             </li>
             <li>
-              Documented and analyzed experimental results to support iterative design decisions
-              and technical reporting.
+              Documented and analyzed experimental results to support iterative
+              design decisions and technical reporting.
             </li>
           </ul>
         </TimeLine>
@@ -138,16 +83,16 @@ export default function Cv() {
         >
           <ul className="list-disc mx-6 mb-6 grid gap-0.5 text-sm">
             <li>
-              Designed, fabricated, and assembled electronic laboratory hardware for deployment
-              across BME teaching labs.
+              Designed, fabricated, and assembled electronic laboratory hardware
+              for deployment across BME teaching labs.
             </li>
             <li>
-              Developed a stimulus-responsive EKG simulator generating physiologically accurate
-              signals for lab use.
+              Developed a stimulus-responsive EKG simulator generating
+              physiologically accurate signals for lab use.
             </li>
             <li>
-              Validated hardware performance under extended use conditions to ensure durability
-              and safety.
+              Validated hardware performance under extended use conditions to
+              ensure durability and safety.
             </li>
           </ul>
         </TimeLine>
@@ -157,29 +102,32 @@ export default function Cv() {
         >
           <ul className="list-disc mx-6 mb-6 grid gap-0.5 text-sm">
             <li>
-              Supervised day-to-day operations of the Foundry makerspace, supporting student use
-              of fabrication equipment.
+              Supervised day-to-day operations of the Foundry makerspace,
+              supporting student use of fabrication equipment.
             </li>
             <li>
-              Trained and onboarded users on safe operation of 3D printers, laser cutters, CNC
-              machines, and electronics tools.
+              Trained and onboarded users on safe operation of 3D printers,
+              laser cutters, CNC machines, and electronics tools.
             </li>
             <li>
-              Coordinated maintenance schedules and ensured compliance with safety standards
-              across the facility.
+              Coordinated maintenance schedules and ensured compliance with
+              safety standards across the facility.
             </li>
           </ul>
         </TimeLine>
         <TimeLine
-          title="Engineering Design & Communication TA"
-          subtitle="August 2023 to June 2024 at Duke University · Durham, NC"
+          title="Engineering Design Teaching Assistant"
+          subtitle="August 2023 to June 2024 at Duke University BME Department · Durham, NC"
         >
           <ul className="list-disc mx-6 mb-6 grid gap-0.5 text-sm">
             <li>
-              Mentored student teams through end-to-end engineering design and prototyping
-              workflows.
+              Mentored student teams through end-to-end engineering design and
+              prototyping workflows.
             </li>
-            <li>Supported hardware and CAD development for client-driven design projects.</li>
+            <li>
+              Supported hardware and CAD development for client-driven design
+              projects.
+            </li>
             <li>Evaluated technical deliverables and design reviews.</li>
             <li>Oversaw safe use of machine shop equipment.</li>
           </ul>
@@ -190,16 +138,17 @@ export default function Cv() {
         >
           <ul className="list-disc mx-6 mb-6 grid gap-0.5 text-sm">
             <li>
-              Developed and implemented a streamlined workflow that accelerated city audit
-              processes, improving efficiency and reducing processing time.
+              Developed and implemented a streamlined workflow that accelerated
+              city audit processes, improving efficiency and reducing processing
+              time.
             </li>
             <li>
-              Assisted in the bidding process by organizing and managing files, ensuring accurate
-              and accessible documentation.
+              Assisted in the bidding process by organizing and managing files,
+              ensuring accurate and accessible documentation.
             </li>
             <li>
-              Identified and exposed discrepancies between contractor agreements and city
-              contracts, contributing to improved contract compliance.
+              Identified and exposed discrepancies between contractor agreements
+              and city contracts, contributing to improved contract compliance.
             </li>
           </ul>
         </TimeLine>
@@ -218,13 +167,16 @@ export default function Cv() {
         >
           <ul className="list-disc mx-6 mb-6 grid gap-0.5 text-sm">
             <li>
-              Supported emergency medicine clinical studies through compliant data collection and
-              EMR review.
+              Supported emergency medicine clinical studies through compliant
+              data collection and EMR review.
             </li>
-            <li>Collected and documented patient consent per IRB and FDA guidelines.</li>
             <li>
-              Collaborated with physicians, residents, and research staff to support ongoing
-              clinical investigations.
+              Collected and documented patient consent per IRB and FDA
+              guidelines.
+            </li>
+            <li>
+              Collaborated with physicians, residents, and research staff to
+              support ongoing clinical investigations.
             </li>
           </ul>
         </TimeLine>
@@ -235,12 +187,12 @@ export default function Cv() {
           Patents
         </div>
       </div>
-      <ul className="list-disc mx-6 mb-10 grid gap-2">
-        <li>
-          Device and Methods for Arterial Insertion Training | US Provisional Patent No.
-          63/463,432 · Filed May 2, 2023
-        </li>
-      </ul>
+      <div className="time-line-container mb-10">
+        <TimeLine
+          title="Device and Methods for Arterial Insertion Training"
+          subtitle="US Provisional Patent No. 63/463,432 · Filed May 2, 2023"
+        ></TimeLine>
+      </div>
 
       <div className="mb-5">
         <div id="projects" className="text-3xl w-full font-bold">
@@ -257,13 +209,14 @@ export default function Cv() {
         >
           <ul className="list-disc mx-6 mb-6 grid gap-0.5 text-sm">
             <li>
-              Developed a handheld UV-C disinfection device for central-line hubs, targeting the
-              ~40,000 annual CLABSIs and removing dependence on nurse compliance with the
-              Scrub-the-Hub protocol.
+              Developed a handheld UV-C disinfection device for central-line
+              hubs, targeting the ~40,000 annual CLABSIs and removing dependence
+              on nurse compliance with the Scrub-the-Hub protocol.
             </li>
             <li>
-              Engineered three custom KiCad PCBs and an SLA 3D-printed enclosure, validating a
-              4-log CFU reduction and 2.49 mW optical output in the 263–273 nm germicidal window.
+              Engineered three custom KiCad PCBs and an SLA 3D-printed
+              enclosure, validating a 4-log CFU reduction and 2.49 mW optical
+              output in the 263–273 nm germicidal window.
             </li>
           </ul>
         </TimeLine>
@@ -273,12 +226,23 @@ export default function Cv() {
         >
           <ul className="list-disc mx-6 mb-6 grid gap-0.5 text-sm">
             <li>
-              Designed and built an ESP32 ECG synthesizer (C++/FreeRTOS) with a custom
-              differential analog output stage targeting standard limb-lead outputs.
+              Designed and built an ESP32 ECG synthesizer (C++/FreeRTOS) with a
+              custom differential analog output stage targeting standard
+              limb-lead outputs.
             </li>
             <li>
-              Enabled repeatable bench validation of ECG acquisition hardware and signal-processing
-              algorithms.
+              Enabled repeatable bench validation of ECG acquisition hardware
+              and signal-processing algorithms.
+            </li>
+          </ul>
+        </TimeLine>
+        <TimeLine title="Browser Games" buttonLink="../projects/games">
+          <ul className="list-disc mx-6 mb-6 grid gap-0.5 text-sm">
+            <li>
+              Built a collection of eight self-contained browser games (Snake,
+              2048, Tower Defense, Flappy Bird, and more) in React and
+              TypeScript using a registry-driven architecture and a reusable
+              game-player component.
             </li>
           </ul>
         </TimeLine>
@@ -290,9 +254,14 @@ export default function Cv() {
         >
           <ul className="list-disc mx-6 mb-6 grid gap-0.5 text-sm">
             <li>
-              Co-developed a durable arterial line placement training device for students and
-              clinicians, selected for the VentureWell Summer 2023 cohort and filed as patent
-              pending.
+              Co-developed a durable, anatomically accurate arterial line
+              placement training device to address the shortage of realistic,
+              reusable simulation tools for radial a-line insertion training.
+            </li>
+            <li>
+              Iterated through multiple prototype revisions incorporating
+              clinician and user feedback to improve pulse simulation fidelity,
+              tissue realism, and durability under repeated needle insertions.
             </li>
           </ul>
         </TimeLine>
@@ -302,24 +271,14 @@ export default function Cv() {
         >
           <ul className="list-disc mx-6 mb-6 grid gap-0.5 text-sm">
             <li>
-              Built a constraint-based production scheduling service on OR-Tools CP-SAT that accepts
-              job-shop problems as JSON and returns tardiness-minimizing schedules with KPIs.
+              Built a constraint-based production scheduling service on OR-Tools
+              CP-SAT that accepts job-shop problems as JSON and returns
+              tardiness-minimizing schedules with KPIs.
             </li>
             <li>
-              Architected a FastAPI backend with pluggable adapter, objective, and constraint
-              systems, paired with a React + TypeScript Gantt frontend.
-            </li>
-          </ul>
-        </TimeLine>
-        <TimeLine
-          title="PET/CT Brain Phantom Simulator"
-          buttonLink="../projects/pet-ct-sim"
-        >
-          <ul className="list-disc mx-6 mb-6 grid gap-0.5 text-sm">
-            <li>
-              Built a physics-based PET/CT brain phantom simulator in Python and Jupyter,
-              implementing phantom generation, CT simulation, and PET simulation pipelines for
-              medical imaging education.
+              Architected a FastAPI backend with pluggable adapter, objective,
+              and constraint systems, paired with a React + TypeScript Gantt
+              frontend.
             </li>
           </ul>
         </TimeLine>
@@ -329,8 +288,20 @@ export default function Cv() {
         >
           <ul className="list-disc mx-6 mb-6 grid gap-0.5 text-sm">
             <li>
-              Designed a custom KiCad PCB to validate multiple integrated circuits for Duke BME 354
-              coursework.
+              Designed a custom KiCad PCB to validate multiple integrated
+              circuits for Duke BME 354 coursework.
+            </li>
+          </ul>
+        </TimeLine>
+        <TimeLine
+          title="PET/CT Brain Phantom Simulator"
+          buttonLink="../projects/pet-ct-sim"
+        >
+          <ul className="list-disc mx-6 mb-6 grid gap-0.5 text-sm">
+            <li>
+              Built a physics-based PET/CT brain phantom simulator in Python and
+              Jupyter, implementing phantom generation, CT simulation, and PET
+              simulation pipelines for medical imaging education.
             </li>
           </ul>
         </TimeLine>
@@ -342,35 +313,24 @@ export default function Cv() {
         >
           <ul className="list-disc mx-6 mb-6 grid gap-0.5 text-sm">
             <li>
-              Served as consulting TA for two Duke EGR 101 Foundry teams building wearable GPS and
-              accelerometer trackers for foster dogs at Saving Grace Animal Shelter.
+              Served as consulting TA for two Duke EGR 101 Foundry teams
+              building wearable GPS and accelerometer trackers for foster dogs
+              at Saving Grace Animal Shelter.
             </li>
             <li>
-              Guided students through sensor selection, prototyping, and iteration on a real-world
-              wearable.
+              Guided students through sensor selection, prototyping, and
+              iteration on a real-world wearable.
             </li>
           </ul>
         </TimeLine>
-        <TimeLine
-          title="Browser Games"
-          buttonLink="../projects/games"
-        >
-          <ul className="list-disc mx-6 mb-6 grid gap-0.5 text-sm">
-            <li>
-              Built a collection of eight self-contained browser games (Snake, 2048, Tower Defense,
-              Flappy Bird, and more) in React and TypeScript using a registry-driven architecture
-              and a reusable game-player component.
-            </li>
-          </ul>
-        </TimeLine>
-        <TimeLine
-          title="NicholasTrigger.com Portfolio Website"
+        <TimeLine 
+        title="NicholasTrigger.com Portfolio Website"
+        buttonLink="https://github.com/Nick-Trigger/Portfolio-Websites"
         >
           <ul className="list-disc mx-6 grid gap-0.5 text-sm">
             <li>
-              Built a personal portfolio site in React, Vite, and Tailwind CSS, statically
-              prerendered for GitHub Pages, with an interactive games section and site-wide custom
-              features.
+              Built a personal portfolio site in React, Vite, and Tailwind CSS,
+              statically prerendered for GitHub Pages, with site-wide custom features.
             </li>
           </ul>
         </TimeLine>
@@ -389,14 +349,17 @@ export default function Cv() {
         >
           <ul className="list-disc mx-6 grid gap-0.5 text-sm">
             <li>
-              Led development of a medical training device focused on improving arterial line
-              placement accuracy.
+              Led development of a medical training device focused on improving
+              arterial line placement accuracy.
             </li>
             <li>
-              Directed device design, prototyping, and iterative testing in collaboration with
-              Duke Med School.
+              Directed device design, prototyping, and iterative testing in
+              collaboration with other students and Duke Med School.
             </li>
-            <li>Secured a $5,000 VentureWell grant to support continued device development.</li>
+            <li>
+              Secured a $5,000 VentureWell grant to support continued device
+              development.
+            </li>
           </ul>
         </TimeLine>
         <TimeLine
@@ -405,12 +368,12 @@ export default function Cv() {
         >
           <ul className="list-disc mx-6 grid gap-0.5 text-sm">
             <li>
-              Led weekly robotics instruction sessions for middle school students in Durham-area
-              schools.
+              Led weekly robotics instruction sessions for middle school
+              students in Durham-area schools.
             </li>
             <li>
-              Managed communication and coordination between Duke undergraduate mentors and
-              partner schools.
+              Managed communication and coordination between Duke undergraduate
+              mentors and partner schools.
             </li>
           </ul>
         </TimeLine>
@@ -420,12 +383,12 @@ export default function Cv() {
         >
           <ul className="list-disc mx-6 grid gap-0.5 text-sm">
             <li>
-              Oversaw equipment inventory, inspection, and maintenance to ensure compliance with
-              safety standards.
+              Oversaw equipment inventory, inspection, and maintenance to ensure
+              compliance with safety standards.
             </li>
             <li>
-              Coordinated equipment logistics and distribution to support club operations and
-              travel.
+              Coordinated equipment logistics and distribution to support club
+              operations and travel.
             </li>
           </ul>
         </TimeLine>
@@ -435,11 +398,12 @@ export default function Cv() {
         >
           <ul className="list-disc mx-6 grid gap-0.5 text-sm">
             <li>
-              Developed embedded firmware to control payload release sequencing and system timing.
+              Developed embedded firmware to control payload release sequencing
+              and system timing.
             </li>
             <li>
-              Contributed to the development and integration of a CubeSat-style payload for a
-              student-led rocket mission.
+              Contributed to the development and integration of a CubeSat-style
+              payload for a student-led rocket mission.
             </li>
           </ul>
         </TimeLine>
@@ -450,7 +414,8 @@ export default function Cv() {
           <ul className="list-disc mx-6 grid gap-0.5 text-sm">
             <li>Organized charity running events across Corpus Christi, TX.</li>
             <li>
-              Raised over $10,000 for the Ronald McDonald House and Driscoll Children's Hospital.
+              Raised over $10,000 for the Ronald McDonald House and Driscoll
+              Children's Hospital.
             </li>
           </ul>
         </TimeLine>
@@ -459,8 +424,12 @@ export default function Cv() {
           subtitle="May 2017 to April 2020 · Corpus Christi, TX"
         >
           <ul className="list-disc mx-6 grid gap-0.5 text-sm">
-            <li>Provided animal care through maintenance, enrichment, and feeding.</li>
-            <li>Educated guests on animals and environmental threats to wildlife.</li>
+            <li>
+              Provided animal care through maintenance, enrichment, and feeding.
+            </li>
+            <li>
+              Educated guests on animals and environmental threats to wildlife.
+            </li>
             <li>Received the President's Gold Award for Volunteer Service.</li>
           </ul>
         </TimeLine>
@@ -491,7 +460,8 @@ export default function Cv() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            🔗 CITI Program: Principal Investigator; Sub Investigators; CRC's (Human Subjects)
+            🔗 CITI Program: Principal Investigator; Sub Investigators; CRC's
+            (Human Subjects)
           </a>
         </li>
       </ul>
@@ -530,7 +500,9 @@ export default function Cv() {
         <li>GD&T</li>
       </ul>
 
-      <div className="mb-2 font-semibold text-sm">Electrical CAD & Embedded Systems</div>
+      <div className="mb-2 font-semibold text-sm">
+        Electrical CAD & Embedded Systems
+      </div>
       <ul className="list-disc md:columns-3 columns-2 mx-6 mb-4 text-sm">
         <li>KiCad</li>
         <li>EAGLE</li>
@@ -564,7 +536,9 @@ export default function Cv() {
         <li>Git, GitHub & GitLab</li>
       </ul>
 
-      <div className="mb-2 font-semibold text-sm">Prototyping & Manufacturing</div>
+      <div className="mb-2 font-semibold text-sm">
+        Prototyping & Manufacturing
+      </div>
       <ul className="list-disc md:columns-3 columns-2 mx-6 mb-10 text-sm">
         <li>3D Printing (FDM)</li>
         <li>CNC & Manual Machining</li>

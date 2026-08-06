@@ -28,8 +28,8 @@ export default function Projects() {
 
     <BaseLayout title="Nicholas Trigger - Projects">
       <>
-        <div className="flex items-baseline gap-2 mb-2">
-          <h1 className="text-3xl font-bold">Projects</h1>
+        <div className="flex items-baseline gap-2 py-2">
+          <h1 className="text-4xl md:text-5xl font-bold">Projects</h1>
         </div>
 
         <div className="relative w-full max-w-xs mt-5 mb-2">
