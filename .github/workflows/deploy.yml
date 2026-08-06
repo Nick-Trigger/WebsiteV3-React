@@ -49,7 +49,7 @@ jobs:
         run: npm ci
       # Compare each PDF in public/ against its previous committed version and
       # regenerate src/data/documentDates.ts, so the resume/CV viewers show the
-      # month and year the document itself last changed. Writes a table to the
+      # date the document itself last changed. Writes a table to the
       # run summary noting whether anything moved since the last build.
       - name: Refresh document dates
         run: npm run doc-dates

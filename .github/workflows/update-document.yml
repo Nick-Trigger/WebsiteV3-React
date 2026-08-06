@@ -7,7 +7,7 @@
 #
 # What it does: downloads the PDF, checks it's really a PDF and actually
 # different from the current one, commits it over the existing file, refreshes
-# the "Updated <Month> <Year>" text on the viewer pages, and redeploys.
+# the "Updated <Month> <Day>, <Year>" text on the viewer pages, and redeploys.
 name: Update resume/CV PDF
 
 on:

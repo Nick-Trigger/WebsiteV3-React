@@ -54,15 +54,26 @@ function git(...args) {
 
 const isShallow = git('rev-parse', '--is-shallow-repository') === 'true';
 
-// Commit date of the last change to `file`, or null if git can't tell us
-// (no history for the path, shallow clone that truncated it, or no git at all).
+// Calendar date (YYYY-MM-DD) of the last change to `file`, or null if git can't
+// tell us — no history for the path, a shallow clone that truncated it, or no
+// git at all. %cs is the commit's own date in the timezone it was made in, so
+// an evening commit doesn't slide to the next day the way a UTC cast would.
 function lastCommitDate(file) {
-  const iso = git('log', '-1', '--format=%cI', '--', file);
-  return iso ? new Date(iso) : null;
+  return git('log', '-1', '--format=%cs', '--', file) || null;
 }
 
-const monthYear = new Intl.DateTimeFormat('en-US', {
+// Local calendar date of a Date, for the mtime fallback.
+function localDate(date) {
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, '0'),
+    String(date.getDate()).padStart(2, '0'),
+  ].join('-');
+}
+
+const longDate = new Intl.DateTimeFormat('en-US', {
   month: 'long',
+  day: 'numeric',
   year: 'numeric',
   timeZone: 'UTC',
 });
@@ -71,14 +82,14 @@ const entries = [];
 const notes = [];
 
 for (const [key, file] of Object.entries(DOCUMENTS)) {
-  let date = lastCommitDate(file);
+  let iso = lastCommitDate(file);
   let source = 'git';
 
-  if (!date) {
+  if (!iso) {
     // Uncommitted file, or a shallow clone whose history doesn't reach the last
     // change. Fall back to the file's mtime so the build still gets a date.
     try {
-      date = (await stat(join(repoRoot, file))).mtime;
+      iso = localDate((await stat(join(repoRoot, file))).mtime);
       source = isShallow ? 'mtime (shallow clone)' : 'mtime (uncommitted)';
       notes.push(`${key}: no commit found for ${file}, fell back to file mtime`);
     } catch {
@@ -90,8 +101,10 @@ for (const [key, file] of Object.entries(DOCUMENTS)) {
   entries.push({
     key,
     file,
-    iso: date.toISOString().slice(0, 10),
-    label: monthYear.format(date),
+    iso,
+    // Parsed as UTC midnight and formatted as UTC, so the plain calendar date
+    // above round-trips to the label unchanged.
+    label: longDate.format(new Date(`${iso}T00:00:00Z`)),
     source,
   });
 }
@@ -102,9 +115,9 @@ const body = `// GENERATED FILE — do not edit by hand.
 // Each entry is the date of the most recent commit that changed the matching
 // PDF in public/, so the viewers can say when the document itself last changed.
 export interface DocumentDate {
-  /** Commit date of the last change, as YYYY-MM-DD (UTC). */
+  /** Commit date of the last change, as YYYY-MM-DD. */
   iso: string;
-  /** Human-readable month and year, e.g. "August 2026". */
+  /** Human-readable date, e.g. "August 6, 2026". */
   label: string;
 }
 
