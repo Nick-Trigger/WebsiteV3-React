@@ -1,4 +1,5 @@
 import PdfViewerPage from "../components/PdfViewerPage";
+import { documentDates } from "../data/documentDates";
 
 export default function ResumeViewer() {
     return (
@@ -7,7 +8,7 @@ export default function ResumeViewer() {
             backTo="/"
             buttonText="Return to Home"
             heading="Nicholas Trigger's Resume"
-            subtitle="Updated August 2026"
+            subtitle={`Updated ${documentDates.resume.label}`}
             pdfUrl="/Trigger,Nicholas-Resume.pdf"
         />
     );
