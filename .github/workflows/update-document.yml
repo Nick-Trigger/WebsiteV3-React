@@ -1,0 +1,171 @@
+# Swap the resume or CV PDF and redeploy
+#
+# GitHub's "Run workflow" form can't take a file upload, so the new PDF is
+# fetched from a URL. The easiest way to get one: open a new GitHub issue (don't
+# submit it), drag the PDF into the comment box, and copy the
+# https://github.com/user-attachments/... link it inserts.
+#
+# What it does: downloads the PDF, checks it's really a PDF and actually
+# different from the current one, commits it over the existing file, refreshes
+# the "Updated <Month> <Year>" text on the viewer pages, and redeploys.
+name: Update resume/CV PDF
+
+on:
+  workflow_dispatch:
+    inputs:
+      document:
+        description: Which document to replace
+        type: choice
+        required: true
+        options: [resume, cv]
+      pdf_url:
+        description: Direct https:// link to the new PDF
+        type: string
+        required: true
+      deploy:
+        description: Redeploy the site after committing
+        type: boolean
+        required: false
+        default: true
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: update-document
+  cancel-in-progress: false
+
+jobs:
+  swap:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      changed: ${{ steps.commit.outputs.changed }}
+      sha: ${{ steps.commit.outputs.sha }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Full history so scripts/document-dates.mjs can read commit dates.
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # scripts/document-dates.mjs owns the key -> path mapping, so the
+      # filenames aren't duplicated here.
+      - name: Resolve target file
+        id: target
+        env:
+          DOCUMENT: ${{ inputs.document }}
+        run: |
+          path="$(node scripts/document-dates.mjs --path "$DOCUMENT")"
+          echo "path=$path" >> "$GITHUB_OUTPUT"
+          echo "Replacing $path"
+
+      # The URL comes from the person running the workflow, so it's read into an
+      # env var rather than interpolated into the script, and the download is
+      # constrained to https, 25 MB, and files that actually start with %PDF-.
+      - name: Download the new PDF
+        id: download
+        env:
+          PDF_URL: ${{ inputs.pdf_url }}
+          TARGET: ${{ steps.target.outputs.path }}
+        run: |
+          set -euo pipefail
+
+          case "$PDF_URL" in
+            https://*) ;;
+            *) echo "::error::pdf_url must start with https://"; exit 1 ;;
+          esac
+
+          curl --proto '=https' --proto-redir '=https' \
+               --location --fail --silent --show-error \
+               --max-time 120 --max-filesize 26214400 \
+               --output new.pdf "$PDF_URL"
+
+          size=$(stat -c%s new.pdf)
+          if [ "$size" -lt 1024 ] || [ "$size" -gt 26214400 ]; then
+            echo "::error::Downloaded file is $size bytes; expected between 1 KB and 25 MB"
+            exit 1
+          fi
+
+          # A wrong link usually lands on an HTML login/preview page, which this
+          # catches before anything is committed.
+          if [ "$(head -c 5 new.pdf)" != "%PDF-" ]; then
+            echo "::error::Downloaded file is not a PDF (no %PDF- header). Use a direct link to the file, not a viewer page."
+            exit 1
+          fi
+
+          old_sum=$(sha256sum "$TARGET" | cut -d' ' -f1)
+          new_sum=$(sha256sum new.pdf | cut -d' ' -f1)
+          echo "size=$size" >> "$GITHUB_OUTPUT"
+          if [ "$old_sum" = "$new_sum" ]; then
+            echo "identical=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::The uploaded PDF is byte-identical to the current one; nothing to do."
+          else
+            echo "identical=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit the swap
+        id: commit
+        if: steps.download.outputs.identical == 'false'
+        env:
+          DOCUMENT: ${{ inputs.document }}
+          TARGET: ${{ steps.target.outputs.path }}
+        run: |
+          set -euo pipefail
+          mv new.pdf "$TARGET"
+
+          git config user.name  'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- "$TARGET"
+          git commit -m "Update $DOCUMENT PDF"
+
+          # The date shown on the viewers comes from the commit that changed the
+          # PDF, so this has to run after the commit exists — then fold the
+          # regenerated file into that same commit.
+          npm run doc-dates
+          if ! git diff --quiet -- src/data/documentDates.ts; then
+            git add -- src/data/documentDates.ts
+            git commit --amend --no-edit
+          fi
+
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Summary
+        if: always()
+        env:
+          DOCUMENT: ${{ inputs.document }}
+          TARGET: ${{ steps.target.outputs.path }}
+          SIZE: ${{ steps.download.outputs.size }}
+          IDENTICAL: ${{ steps.download.outputs.identical }}
+          SHA: ${{ steps.commit.outputs.sha }}
+        run: |
+          {
+            echo "### ${DOCUMENT} PDF"
+            echo
+            if [ "$IDENTICAL" = "true" ]; then
+              echo "No change — the uploaded file matches the committed \`$TARGET\`, so nothing was committed or deployed."
+            elif [ -n "$SHA" ]; then
+              echo "Replaced \`$TARGET\` (${SIZE} bytes) in commit \`${SHA}\` on \`${GITHUB_REF_NAME}\`."
+            else
+              echo "Download or validation failed; \`$TARGET\` was left untouched."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # A push made with GITHUB_TOKEN doesn't trigger deploy.yml's `push` event,
+  # so the deploy is called explicitly, pinned to the commit just pushed.
+  deploy:
+    needs: swap
+    if: needs.swap.outputs.changed == 'true' && inputs.deploy
+    uses: ./.github/workflows/deploy.yml
+    with:
+      ref: ${{ needs.swap.outputs.sha }}

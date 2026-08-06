@@ -6,6 +6,16 @@ on:
     branches: [main]
   # Allows you to run this workflow manually from the Actions tab on GitHub.
   workflow_dispatch:
+  # Lets other workflows (update-document.yml) redeploy after committing.
+  # A push made with GITHUB_TOKEN does not start a new workflow run, so the
+  # swap workflow calls this one directly instead of relying on its push.
+  workflow_call:
+    inputs:
+      ref:
+        description: Commit or branch to build. Defaults to the triggering commit.
+        type: string
+        required: false
+        default: ''
 
 # Allow this job to clone the repo and create a page deployment
 permissions:
@@ -24,6 +34,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # `inputs` is null unless this run came through workflow_call.
+          ref: ${{ inputs.ref || github.sha }}
+          # Full history: scripts/document-dates.mjs reads the commit date of
+          # the last change to each PDF, which a shallow clone would hide.
+          fetch-depth: 0
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -31,6 +47,12 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci
+      # Compare each PDF in public/ against its previous committed version and
+      # regenerate src/data/documentDates.ts, so the resume/CV viewers show the
+      # month and year the document itself last changed. Writes a table to the
+      # run summary noting whether anything moved since the last build.
+      - name: Refresh document dates
+        run: npm run doc-dates
       - name: Build
         run: npm run build
       - name: Upload Pages artifact
@@ -47,6 +69,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
