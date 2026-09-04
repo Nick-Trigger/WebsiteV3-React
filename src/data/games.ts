@@ -33,7 +33,7 @@ export const games: Game[] = [
     title: 'Snake',
     description:
       'Its Snake, Eat Food... Get Longer!',
-    tags: ['NEW', 'Puzzle', 'Strategy'],
+    tags: ['Puzzle', 'Strategy'],
     instructions: [
       'Arrow keys or WASD to steer (on-screen pad on mobile)',
       'Eat the red food to grow and score a point',
@@ -45,7 +45,7 @@ export const games: Game[] = [
     slug: '2048',
     title: '2048',
     description: 'Slide the tiles, merge matching numbers, and reach 2048.',
-    tags: ['NEW', 'Puzzle'],
+    tags: ['Puzzle'],
     instructions: [
       'Arrow keys / WASD or the D-pad to slide every tile',
       'Tiles with the same number merge into one',
@@ -58,7 +58,7 @@ export const games: Game[] = [
     slug: 'tower-defense',
     title: 'Tower Defense',
     description: 'Defend your base from waves of enemies.',
-    tags: ['NEW', 'Strategy'],
+    tags: ['Strategy'],
     instructions: [
       'Place towers to stop the enemies from reaching the end',
       'Choose the right tower for each situation',
@@ -70,7 +70,7 @@ export const games: Game[] = [
     slug: 'flappy',
     title: 'Flappy Bird',
     description: 'Navigate through the pipes without hitting them.',
-    tags: ['NEW', 'Arcade'],
+    tags: ['Arcade'],
     instructions: [
       'Press SPACE or tap the screen to make the bird fly',
       'Avoid the pipes and don\'t hit the ground or ceiling',
@@ -82,7 +82,7 @@ export const games: Game[] = [
     slug: 'breakout',
     title: 'Breakout',
     description: 'Break all the bricks without letting the ball fall.',
-    tags: ['NEW', 'Arcade'],
+    tags: ['Arcade'],
     instructions: [
       'Use the arrow keys or mouse to move the paddle',
       'Bounce the ball to break all the bricks',
@@ -94,7 +94,7 @@ export const games: Game[] = [
     slug: 'pong',
     title: 'Pong',
     description: 'A classic two-player game of ping-pong.',
-    tags: ['NEW', 'Arcade'],
+    tags: ['Arcade'],
     instructions: [
       'Use W and S keys to move the paddle up and down or arrow keys on mobile',
       'First player to score 11 points wins!',
@@ -105,7 +105,7 @@ export const games: Game[] = [
     slug: 'sliding-puzzle',
     title: 'Sliding Puzzle',
     description: 'Rearrange the tiles to form a complete picture.',
-    tags: ['NEW', 'Puzzle'],
+    tags: ['Puzzle'],
     instructions: [
       'Click a tile next to the empty space to slide it, or click and drag it into the gap',
       'Pick a difficulty from 3×3 up to 6×6',
@@ -118,7 +118,7 @@ export const games: Game[] = [
     slug: 'whack-a-mole',
     title: 'Whack-a-Mole',
     description: 'Hit as many moles as you can before time runs out.',
-    tags: ['NEW', 'Arcade'],
+    tags: ['Arcade'],
     instructions: [
       "Click on a mole's hole when it appears",
       "Don't click on an empty hole",

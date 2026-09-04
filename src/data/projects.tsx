@@ -33,6 +33,15 @@ export interface Project {
  * tag filtering. Project detail routes still live in src/routes.tsx.
  */
 export const projects: Project[] = [
+    {
+    title: 'Radial Arterial Line Placement Simulation Device',
+    img: '/PulseMateLogo-01.svg',
+    desc: 'Easy to use and durable, this training device is designed with students and medical professionals in mind.',
+    url: '/projects/arm',
+    badges: ['Patent Pending', 'VentureWell Summer 2023 Cohort'],
+    tags: ['Medical Device', 'CAD', 'Hardware', 'Embedded'],
+    featured: true,
+  },
   {
     title: 'Browser Games',
     Media: GameThumbnail,
@@ -47,16 +56,7 @@ export const projects: Project[] = [
     desc: 'Write and run Python, JavaScript, C, C++, and Rust from the browser. Python and JavaScript execute in sandboxed WebAssembly VMs in a Web Worker; compiled languages run on a remote sandbox service.',
     url: '/projects/playgrounds',
     tags: ['Interactive', 'React', 'Python'],
-    featured: true,
-  },
-  {
-    title: 'Radial Arterial Line Placement Simulation Device',
-    img: '/PulseMateLogo-01.svg',
-    desc: 'Easy to use and durable, this training device is designed with students and medical professionals in mind.',
-    url: '/projects/arm',
-    badges: ['Patent Pending', 'VentureWell Summer 2023 Cohort'],
-    tags: ['Medical Device', 'CAD', 'Hardware', 'Embedded'],
-    featured: true,
+    featured: false,
   },
   {
     title: 'CLABSI Prevention Device',

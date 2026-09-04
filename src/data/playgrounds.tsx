@@ -43,7 +43,7 @@ export const playgrounds: Playground[] = [
     title: 'Python Playground',
     description:
       'Write and run Python code directly in your browser.',
-    tags: ['NEW', 'Python', 'Local', 'Pyodide'],
+    tags: ['Local', 'Python', 'Pyodide'],
     notes: [
       'Your code runs in CPython compiled to WebAssembly (Pyodide), inside a Web Worker; it never touches this page or any server',
       'Network access is disabled inside the sandbox.',
@@ -60,7 +60,7 @@ export const playgrounds: Playground[] = [
     title: 'JavaScript Playground',
     description:
       'Run JavaScript inside an isolated QuickJS virtual machine compiled to WebAssembly.',
-    tags: ['NEW', 'JavaScript', 'Local', 'QuickJS'],
+    tags: ['Local', 'JavaScript', 'QuickJS'],
     notes: [
       'Your code runs in QuickJS, a separate JS engine compiled to WebAssembly.',
       'The VM starts empty no DOM, no fetch, and no timers, just a JS interpreter.',
@@ -76,7 +76,7 @@ export const playgrounds: Playground[] = [
     title: 'C Playground',
     description:
       'Write C and run it on a remote sandbox.',
-    tags: ['NEW', 'C', 'Remote'],
+    tags: ['Remote', 'C'],
     notes: [
       'There is no practical C compiler that runs in a browser (that I know of), so your code is sent over HTTPS to the public Compiler Explorer sandbox (godbolt.org), compiled with GCC 15',
       'It compiles and runs inside an isolated container there; only the text output is returned, and nothing executes in your browser or on this site',
@@ -91,7 +91,7 @@ export const playgrounds: Playground[] = [
     title: 'C++ Playground',
     description:
       'Write modern C++ and run it on a remote sandbox.',
-    tags: ['NEW', 'C++', 'Remote'],
+    tags: ['Remote', 'C++'],
     notes: [
       'There is no practical C++ compiler that runs in a browser (that I know of), so your code is sent over HTTPS to the public Compiler Explorer sandbox (godbolt.org), compiled with G++ 15 (-std=c++23)',
       'It compiles and runs inside an isolated container there; only the text output is returned, and nothing executes in your browser or on this site',
@@ -106,7 +106,7 @@ export const playgrounds: Playground[] = [
     title: 'Rust Playground',
     description:
       'Write Rust and run it on a remote sandbox.',
-    tags: ['NEW', 'Rust', 'Remote'],
+    tags: ['Remote', 'Rust'],
     notes: [
       'There is no practical Rust compiler that runs in a browser (that I know of), so your code is sent over HTTPS to the public Compiler Explorer sandbox (godbolt.org), compiled with rustc 1.97',
       'It compiles and runs inside an isolated container there; only the text output is returned, and nothing executes in your browser or on this site',
