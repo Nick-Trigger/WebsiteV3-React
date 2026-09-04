@@ -30,7 +30,7 @@ import { playgrounds } from './data/playgrounds';
 export const routes: RouteRecord[] = [
   { path: '/', element: <Home /> },
   { path: 'projects', element: <Projects /> },
-  { path: 'cv', element: <Cv /> },
+  { path: 'cv', element: <CvViewer /> },
   { path: '/resume', element: <ResumeViewer /> },
   { path: '/cv_pdf', element: <CvViewer /> },
 

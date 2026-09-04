@@ -20,8 +20,9 @@ export default function SidebarMenu() {
   const active = (test: boolean) =>
     `py-3 my-0.5 text-base${test ? ' bg-primary text-white' : ''}`;
 
-  const onCv = /^\/cv/.test(pathname);
-
+  const onCv = false; // /^\/cv/.test(pathname); //! Disabled
+  
+  //! Disabled 09/04/2026 - Migrated to PDF viewer
   // Desktop (lg+): the section links pop out as a floating flyout anchored to
   // the CV item. It is portaled to <body> with fixed positioning so the
   // sidebar's overflow-y-auto doesn't clip it, and so it overlays the page
@@ -62,6 +63,11 @@ export default function SidebarMenu() {
           Projects
         </Link>
       </li>
+      <li>
+        <Link className={active(/^\/resume/.test(pathname))} to="/resume">
+          Resume
+        </Link>
+      </li>
       <li
         ref={cvItemRef}
         onMouseEnter={onCv ? openFlyout : undefined}
@@ -100,6 +106,7 @@ export default function SidebarMenu() {
               </svg>
             </button>
           )}
+          
         </Link>
 
         {/* Inline submenu for touch devices, where the hover flyout can't open */}
