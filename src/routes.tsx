@@ -2,7 +2,7 @@ import type { RouteRecord } from 'vite-react-ssg';
 
 import Home from './pages/Home';
 import Projects from './pages/Projects';
-import Cv from './pages/Cv';
+// import Cv from './pages/Cv';
 import ResumeViewer from './pages/ResumeViewer';
 import CvViewer from './pages/cvViewer';
 import NotFound from './pages/NotFound';
@@ -62,7 +62,7 @@ export const routes: RouteRecord[] = [
     element: <PlaygroundLayout playground={playground} />,
   })),
 
-  // Prerendered so GitHub Pages can serve it as 404.html (see scripts/postbuild.mjs).
+  // Prerendered so it can be served as 404.html (see scripts/postbuild.mjs).
   { path: '404', element: <NotFound /> },
   // Client-side catch-all for any other unknown path.
   { path: '*', element: <NotFound /> },

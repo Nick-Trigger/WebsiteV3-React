@@ -64,7 +64,7 @@ export const projects: Project[] = [
     desc: 'A small collection of playable browser games built as self-contained React components.',
     url: '/projects/games',
     tags: ['Interactive', 'React'],
-    featured: true,
+    featured: false,
   },
   {
     title: 'Code Playgrounds',
@@ -79,7 +79,8 @@ export const projects: Project[] = [
     Media: QrCodeThumbnail,
     desc: 'A tool to generate custom-styled QR codes',
     url: '/projects/qr-code-generator',
-    tags: ['Interactive', 'React'],
+    tags: ['NEW', 'Interactive', 'React'],
+    featured: true,
   },
   {
     title: 'Web Planner',
