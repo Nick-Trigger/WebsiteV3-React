@@ -1,10 +1,6 @@
-import { lazy, Suspense, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import BaseLayout from './BaseLayout';
-
-// pdf.js needs browser APIs, so load the renderer only on the client
-// (never during the static prerender).
-const PdfDocument = lazy(() => import('./PdfDocument'));
+import PdfViewer from './PdfViewer';
 
 interface PdfViewerPageProps {
   pageTitle: string;
@@ -37,15 +33,6 @@ export default function PdfViewerPage({
   pdfUrl,
   buttonText,
 }: PdfViewerPageProps) {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-
-  const spinner = (
-    <div className="flex justify-center p-12">
-      <span className="loading loading-spinner loading-lg"></span>
-    </div>
-  );
-
   return (
     // remove default padding and max-width so the PDF can use the full viewport
     <BaseLayout title={pageTitle} includeSidebar={true} contentClassName="p-0 w-full min-w-0 lg:max-w-none flex flex-grow flex-col items-center">
@@ -54,13 +41,7 @@ export default function PdfViewerPage({
       <h1 className="sr-only">{heading}</h1>
 
       <div className="w-full max-w-6xl px-2">
-        {mounted ? (
-          <Suspense fallback={spinner}>
-            <PdfDocument url={pdfUrl} title={pageTitle} />
-          </Suspense>
-        ) : (
-          spinner
-        )}
+        <PdfViewer url={pdfUrl} title={pageTitle} />
       </div>
 
       <div className="w-full max-w-6xl px-2 mt-6 mb-12">

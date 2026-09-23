@@ -1,53 +1,18 @@
 import { Link } from 'react-router-dom';
 import BaseLayout from '../../components/BaseLayout';
-
-const DownloadIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="14"
-    height="14"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-    <polyline points="7 10 12 15 17 10"></polyline>
-    <line x1="12" y1="15" x2="12" y2="3"></line>
-  </svg>
-);
+import PdfViewer from '../../components/PdfViewer';
 
 interface PosterPanelProps {
+  team: string;
   authors: string;
   pdfUrl: string;
 }
 
-function PosterPanel({ authors, pdfUrl }: PosterPanelProps) {
+function PosterPanel({ team, authors, pdfUrl }: PosterPanelProps) {
   return (
     <>
-      <div className="flex items-center justify-between mb-2 px-1">
-        <p className="text-sm text-base-content/60">{authors}</p>
-        <a href={pdfUrl} download className="btn btn-primary btn-sm gap-2">
-          <DownloadIcon />
-          Download
-        </a>
-      </div>
-      <div className="w-full rounded-xl overflow-hidden shadow-2xl border border-base-300">
-        <object
-          data={`${pdfUrl}#toolbar=1&view=FitH`}
-          type="application/pdf"
-          style={{ width: '100%', height: '88vh', minHeight: '600px', display: 'block' }}
-        >
-          <div className="flex flex-col items-center justify-center gap-4 p-12 text-base-content/60">
-            <p>Your browser doesn't support inline PDFs.</p>
-            <a href={pdfUrl} target="_blank" rel="noopener noreferrer" className="btn btn-primary">
-              Open PDF
-            </a>
-          </div>
-        </object>
-      </div>
+      <p className="text-sm text-base-content/60 mb-2 px-1">{authors}</p>
+      <PdfViewer url={pdfUrl} title={`${team} Poster`} />
     </>
   );
 }
@@ -94,6 +59,7 @@ export default function DogPosters() {
         />
         <div role="tabpanel" className="tab-content pt-4">
           <PosterPanel
+            team="Team MAAAC: Activity Tracker"
             authors="Alexandre Dias, Ari Dixit, Arshaan Sayed, Conrad Qu, Mila Prakapenka"
             pdfUrl="/dog1poster.pdf"
           />
@@ -108,6 +74,7 @@ export default function DogPosters() {
         />
         <div role="tabpanel" className="tab-content pt-4">
           <PosterPanel
+            team="Team 2: Dog Fitness Tracker"
             authors="Sam Patterson, Pablo Garza T, Yiannis Lempidakis, John Button, Jacob Hills"
             pdfUrl="/dog2poster.pdf"
           />

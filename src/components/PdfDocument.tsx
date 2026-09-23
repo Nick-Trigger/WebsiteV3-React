@@ -1,12 +1,18 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { Document, Page, pdfjs } from 'react-pdf';
-import type { PDFDocumentProxy, PageViewport } from 'pdfjs-dist';
-import 'react-pdf/dist/Page/AnnotationLayer.css';
-import 'react-pdf/dist/Page/TextLayer.css';
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
+import { Document, Page, pdfjs } from "react-pdf";
+import type { PDFDocumentProxy, PageViewport } from "pdfjs-dist";
+import "react-pdf/dist/Page/AnnotationLayer.css";
+import "react-pdf/dist/Page/TextLayer.css";
 
 // Must be set in the same module that renders <Document> (see react-pdf docs).
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.mjs',
+  "pdfjs-dist/build/pdf.worker.min.mjs",
   import.meta.url,
 ).toString();
 
@@ -14,9 +20,11 @@ interface PdfDocumentProps {
   url: string;
   // Shown in the toolbar; falls back to the file name.
   title?: string;
+  // When the PDF last changed, e.g. "September 4, 2026".
+  updated?: string;
 }
 
-type FitMode = 'width' | 'height';
+type FitMode = "width" | "height";
 
 const ZOOM_STEPS = [0.5, 0.75, 1, 1.25, 1.5, 2];
 // iOS Safari refuses to draw canvases larger than this many pixels.
@@ -36,6 +44,14 @@ const Icon = ({ children }: { children: ReactNode }) => (
   >
     {children}
   </svg>
+);
+
+const InfoIcon = () => (
+  <Icon>
+    <circle cx="12" cy="12" r="10"></circle>
+    <line x1="12" y1="16" x2="12" y2="12"></line>
+    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+  </Icon>
 );
 
 const ChevronUpIcon = () => (
@@ -87,6 +103,28 @@ const DownloadIcon = () => (
   </Icon>
 );
 
+const MaximizeIcon = () => (
+  <Icon>
+    <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+  </Icon>
+);
+
+const CloseIcon = () => (
+  <Icon>
+    <line x1="18" y1="6" x2="6" y2="18"></line>
+    <line x1="6" y1="6" x2="18" y2="18"></line>
+  </Icon>
+);
+
+// Vendor-prefixed Fullscreen API, still needed for older Safari.
+type FullscreenElement = HTMLElement & {
+  webkitRequestFullscreen?: () => Promise<void> | void;
+};
+type FullscreenDocument = Document & {
+  webkitFullscreenElement?: Element | null;
+  webkitExitFullscreen?: () => Promise<void> | void;
+};
+
 const PrintIcon = () => (
   <Icon>
     <polyline points="6 9 6 2 18 2 18 9"></polyline>
@@ -100,21 +138,21 @@ const PrintIcon = () => (
 // there and let the native viewer handle printing.
 function printPdf(url: string) {
   if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-    window.open(url, '_blank', 'noopener');
+    window.open(url, "_blank", "noopener");
     return;
   }
-  const iframe = document.createElement('iframe');
-  iframe.style.position = 'fixed';
-  iframe.style.width = '0';
-  iframe.style.height = '0';
-  iframe.style.border = '0';
+  const iframe = document.createElement("iframe");
+  iframe.style.position = "fixed";
+  iframe.style.width = "0";
+  iframe.style.height = "0";
+  iframe.style.border = "0";
   iframe.src = url;
   iframe.onload = () => {
     try {
       iframe.contentWindow?.focus();
       iframe.contentWindow?.print();
     } catch {
-      window.open(url, '_blank', 'noopener');
+      window.open(url, "_blank", "noopener");
     }
     // Leave it long enough for the print dialog to grab the document.
     setTimeout(() => iframe.remove(), 60_000);
@@ -125,7 +163,7 @@ function printPdf(url: string) {
 // Renders a PDF to canvas so it looks the same on every browser/device instead
 // of relying on a native PDF plugin, inside a screen-height scrollable frame
 // with a toolbar like a built-in PDF reader.
-export default function PdfDocument({ url, title }: PdfDocumentProps) {
+export default function PdfDocument({ url, title, updated }: PdfDocumentProps) {
   const [frame, setFrame] = useState<HTMLDivElement | null>(null);
   const pageRefs = useRef<(HTMLDivElement | null)[]>([]);
   // Inner size of the scroll frame (excludes padding and scrollbar gutter).
@@ -139,11 +177,19 @@ export default function PdfDocument({ url, title }: PdfDocumentProps) {
   // What's typed in the page box while it's being edited; null shows currentPage.
   const [pageInput, setPageInput] = useState<string | null>(null);
   const [zoomIndex, setZoomIndex] = useState(ZOOM_STEPS.indexOf(1));
-  const [fitMode, setFitMode] = useState<FitMode>('width');
+  const [fitMode, setFitMode] = useState<FitMode>("width");
+  const [fullscreen, setFullscreen] = useState(false);
+  const [infoOpen, setInfoOpen] = useState(false);
+  const infoRef = useRef<HTMLDivElement>(null);
+  const boxRef = useRef<HTMLDivElement>(null);
+  // How far through the document the frame is scrolled (0-1), so the reading
+  // position survives anything that resizes the pages.
+  const scrollFraction = useRef(0);
 
   const numPages = viewports.length;
   const aspectRatios = viewports.map((vp) => vp.height / vp.width);
-  const label = title ?? decodeURIComponent(url.split('/').pop() ?? url);
+  const fileName = decodeURIComponent(url.split("/").pop() ?? url);
+  const label = title ?? fileName;
   const zoom = ZOOM_STEPS[zoomIndex];
 
   useEffect(() => {
@@ -169,7 +215,9 @@ export default function PdfDocument({ url, title }: PdfDocumentProps) {
         setNearbyPages((prev) => {
           const next = new Set(prev);
           for (const entry of entries) {
-            const index = Number((entry.target as HTMLElement).dataset.pageIndex);
+            const index = Number(
+              (entry.target as HTMLElement).dataset.pageIndex,
+            );
             if (entry.isIntersecting) next.add(index);
             else next.delete(index);
           }
@@ -177,9 +225,11 @@ export default function PdfDocument({ url, title }: PdfDocumentProps) {
         });
       },
       // Start rendering a screen or so before a page scrolls into view.
-      { root: frame, rootMargin: '100% 0px' },
+      { root: frame, rootMargin: "100% 0px" },
     );
-    pageRefs.current.slice(0, numPages).forEach((el) => el && observer.observe(el));
+    pageRefs.current
+      .slice(0, numPages)
+      .forEach((el) => el && observer.observe(el));
     return () => observer.disconnect();
   }, [frame, numPages, hasLayout]);
 
@@ -198,7 +248,9 @@ export default function PdfDocument({ url, title }: PdfDocumentProps) {
   // upper third of the frame.
   const handleScroll = () => {
     if (!frame) return;
-    const threshold = frame.getBoundingClientRect().top + frame.clientHeight / 3;
+    scrollFraction.current = frame.scrollTop / Math.max(frame.scrollHeight, 1);
+    const threshold =
+      frame.getBoundingClientRect().top + frame.clientHeight / 3;
     let page = 1;
     pageRefs.current.forEach((el, i) => {
       if (el && el.getBoundingClientRect().top <= threshold) page = i + 1;
@@ -206,41 +258,131 @@ export default function PdfDocument({ url, title }: PdfDocumentProps) {
     setCurrentPage(page);
   };
 
+  // Close the info panel on any click outside it, or Esc.
+  useEffect(() => {
+    if (!infoOpen) return;
+    const onPointerDown = (e: PointerEvent) => {
+      if (!infoRef.current?.contains(e.target as Node)) setInfoOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setInfoOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [infoOpen]);
+
+  // Full screen: always cover the window with CSS (iPhone Safari only allows
+  // real fullscreen for video), and also use the Fullscreen API where it
+  // exists so the browser's own bars get hidden too.
+  const enterFullscreen = () => {
+    setFullscreen(true);
+    const box = boxRef.current as FullscreenElement | null;
+    const request =
+      box?.requestFullscreen?.bind(box) ??
+      box?.webkitRequestFullscreen?.bind(box);
+    try {
+      Promise.resolve(request?.()).catch(() => {});
+    } catch {
+      // CSS full screen is already showing.
+    }
+  };
+
+  const exitFullscreen = () => {
+    setFullscreen(false);
+    const doc = document as FullscreenDocument;
+    if (doc.fullscreenElement ?? doc.webkitFullscreenElement) {
+      const exit =
+        doc.exitFullscreen?.bind(doc) ?? doc.webkitExitFullscreen?.bind(doc);
+      try {
+        Promise.resolve(exit?.()).catch(() => {});
+      } catch {
+        // Nothing to undo.
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (!fullscreen) return;
+    const doc = document as FullscreenDocument;
+    // Leaving native fullscreen another way (Esc, back gesture) exits ours too.
+    const onChange = () => {
+      if (!(doc.fullscreenElement ?? doc.webkitFullscreenElement))
+        setFullscreen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setFullscreen(false);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    document.addEventListener("webkitfullscreenchange", onChange);
+    document.addEventListener("keydown", onKey);
+    // Stop the page behind the overlay from scrolling.
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("fullscreenchange", onChange);
+      document.removeEventListener("webkitfullscreenchange", onChange);
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = overflow;
+    };
+  }, [fullscreen]);
+
   // `offset` is a distance in CSS pixels below the top of the page.
-  const goToPage = (page: number, offset = 0, behavior: ScrollBehavior = 'smooth') => {
+  const goToPage = (
+    page: number,
+    offset = 0,
+    behavior: ScrollBehavior = "smooth",
+  ) => {
     const el = pageRefs.current[page - 1];
     if (!frame || !el) return;
     // Position within the frame's scrollable content (offsetTop would be
     // relative to the nearest positioned ancestor, not the frame).
     const pageTop =
-      el.getBoundingClientRect().top - frame.getBoundingClientRect().top + frame.scrollTop;
+      el.getBoundingClientRect().top -
+      frame.getBoundingClientRect().top +
+      frame.scrollTop;
     frame.scrollTo({ top: pageTop + offset - 16, behavior });
   };
 
   // Internal link clicked: jump to the destination's spot on its page. `dest`
   // is an explicit PDF destination like [pageRef, {name: 'XYZ'}, left, top, zoom].
-  const handleItemClick = ({ dest, pageIndex }: { dest?: unknown; pageIndex: number }) => {
+  const handleItemClick = ({
+    dest,
+    pageIndex,
+  }: {
+    dest?: unknown;
+    pageIndex: number;
+  }) => {
     let offset = 0;
     const viewport = viewports[pageIndex];
     if (viewport && Array.isArray(dest)) {
       const mode = (dest[1] as { name?: string } | undefined)?.name;
       const top =
-        mode === 'XYZ' ? dest[3] : mode === 'FitH' || mode === 'FitBH' ? dest[2] : mode === 'FitR' ? dest[5] : null;
-      if (typeof top === 'number') {
+        mode === "XYZ"
+          ? dest[3]
+          : mode === "FitH" || mode === "FitBH"
+            ? dest[2]
+            : mode === "FitR"
+              ? dest[5]
+              : null;
+      if (typeof top === "number") {
         const [, y] = viewport.convertToViewportPoint(0, top);
         offset = Math.max(0, y * (pageWidth / viewport.width));
       }
     }
     // Jump instantly: smooth-scrolling across dozens of pages would render
     // every page it passes.
-    goToPage(pageIndex + 1, offset, 'auto');
+    goToPage(pageIndex + 1, offset, "auto");
   };
   const commitPageInput = () => {
     if (pageInput === null) return;
     const page = parseInt(pageInput, 10);
     if (!Number.isNaN(page)) {
       // Jump instantly, for the same reason as internal links.
-      goToPage(Math.min(Math.max(page, 1), numPages), 0, 'auto');
+      goToPage(Math.min(Math.max(page, 1), numPages), 0, "auto");
     }
     setPageInput(null);
   };
@@ -250,14 +392,21 @@ export default function PdfDocument({ url, title }: PdfDocumentProps) {
   const itemClickRef = useRef(handleItemClick);
   itemClickRef.current = handleItemClick;
   const [onItemClick] = useState(
-    () => (args: { dest?: unknown; pageIndex: number }) => itemClickRef.current(args),
+    () => (args: { dest?: unknown; pageIndex: number }) =>
+      itemClickRef.current(args),
   );
 
   const fitWidth =
-    fitMode === 'height' && numPages
+    fitMode === "height" && numPages
       ? Math.min(frameSize.height / aspectRatios[0], frameSize.width)
       : frameSize.width;
   const pageWidth = Math.floor(fitWidth * zoom);
+
+  // Zooming, switching fit or entering full screen resizes every page; put the
+  // frame back at the same point in the document instead of a random page.
+  useLayoutEffect(() => {
+    if (frame) frame.scrollTop = scrollFraction.current * frame.scrollHeight;
+  }, [frame, pageWidth]);
 
   // Render at twice the screen's pixel density, then let the browser scale it
   // down. Rendering at exactly 1x (especially on fractional-DPR screens like
@@ -269,115 +418,210 @@ export default function PdfDocument({ url, title }: PdfDocumentProps) {
       Math.sqrt(MAX_CANVAS_PIXELS / (pageWidth * pageWidth * ratio)),
     );
 
-  const iconButton = 'btn btn-ghost btn-xs sm:btn-sm btn-square';
+  const iconButton = "btn btn-ghost btn-xs sm:btn-sm btn-square";
+  // A tinted pill that visually ties related toolbar controls together.
+  const group = "flex items-center gap-0.5 rounded-lg bg-base-200 p-0.5";
 
   return (
-    <div className="flex flex-col rounded-xl overflow-hidden border border-base-300 shadow-2xl h-[calc(100dvh-8rem)] lg:h-[calc(100dvh-4rem)] min-h-[32rem]">
-      <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 bg-base-300 px-2 py-1.5 text-sm sm:grid sm:grid-cols-[1fr_auto_1fr]">
+    <div
+      ref={boxRef}
+      className={`flex flex-col overflow-hidden bg-base-200 ${
+        fullscreen
+          ? "fixed inset-0 z-[100] h-[100dvh] w-screen"
+          : "rounded-xl border border-base-300 shadow-2xl h-[calc(100dvh-8rem)] lg:h-[calc(100dvh-4rem)] min-h-[32rem]"
+      }`}
+    >
+      {/* Toolbar. Controls are grouped by what they do, each group on its own
+          tinted pill: full screen | page navigation | title | view (zoom, fit)
+          | document (info, download, print). On phones the title takes the
+          first row, navigation and document actions the second, view the third. */}
+      <div className="relative flex flex-wrap items-center justify-between gap-x-2 gap-y-1.5 bg-base-300 px-2 py-1.5 text-sm sm:grid sm:grid-cols-[1fr_auto_1fr]">
         <p
           className="order-first w-full truncate text-center font-medium sm:order-none sm:col-start-2 sm:row-start-1 sm:max-w-xs md:max-w-md"
           title={label}
         >
           {label}
         </p>
-        <div className="flex items-center gap-0.5 sm:col-start-1 sm:row-start-1">
-          <button
-            type="button"
-            className={iconButton}
-            onClick={() => goToPage(currentPage - 1)}
-            disabled={currentPage <= 1}
-            aria-label="Previous page"
-            title="Previous page"
-          >
-            <ChevronUpIcon />
-          </button>
-          <button
-            type="button"
-            className={iconButton}
-            onClick={() => goToPage(currentPage + 1)}
-            disabled={currentPage >= numPages}
-            aria-label="Next page"
-            title="Next page"
-          >
-            <ChevronDownIcon />
-          </button>
-          {numPages ? (
-            <span className="ml-1 flex items-center gap-1 tabular-nums whitespace-nowrap">
-              <input
-                type="text"
-                inputMode="numeric"
-                // Swap daisyUI's offset focus ring for a subtle border colour.
-                className="input input-xs px-1 text-center tabular-nums focus:outline-none focus:shadow-none focus:[--input-color:var(--color-primary)]"
-                style={{ width: `${String(numPages).length + 2}ch` }}
-                value={pageInput ?? currentPage}
-                onFocus={(e) => {
-                  setPageInput(String(currentPage));
-                  e.target.select();
-                }}
-                onChange={(e) => setPageInput(e.target.value.replace(/\D/g, ''))}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') e.currentTarget.blur();
-                  if (e.key === 'Escape') {
-                    setPageInput(null);
-                    // Blur after the reset so onBlur doesn't commit the draft.
-                    requestAnimationFrame(() => (e.target as HTMLInputElement).blur());
+
+        <div className="order-1 flex items-center gap-2 sm:order-none sm:col-start-1 sm:row-start-1">
+          <div role="group" aria-label="Full screen" className={group}>
+            <button
+              type="button"
+              className={iconButton}
+              onClick={fullscreen ? exitFullscreen : enterFullscreen}
+              aria-label={fullscreen ? "Exit full screen" : "Full screen"}
+              title={fullscreen ? "Exit full screen" : "Full screen"}
+            >
+              {fullscreen ? <CloseIcon /> : <MaximizeIcon />}
+            </button>
+          </div>
+
+          <div role="group" aria-label="Page navigation" className={group}>
+            <button
+              type="button"
+              className={iconButton}
+              onClick={() => goToPage(currentPage - 1)}
+              disabled={currentPage <= 1}
+              aria-label="Previous page"
+              title="Previous page"
+            >
+              <ChevronUpIcon />
+            </button>
+
+            {numPages ? (
+              <span className="mx-1 flex items-center gap-1 tabular-nums whitespace-nowrap">
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  // Swap daisyUI's offset focus ring for a subtle border colour.
+                  className="input input-xs px-1 text-center tabular-nums focus:outline-none focus:shadow-none focus:[--input-color:var(--color-primary)]"
+                  style={{ width: `${String(numPages).length + 2}ch` }}
+                  value={pageInput ?? currentPage}
+                  onFocus={(e) => {
+                    setPageInput(String(currentPage));
+                    e.target.select();
+                  }}
+                  onChange={(e) =>
+                    setPageInput(e.target.value.replace(/\D/g, ""))
                   }
-                }}
-                onBlur={commitPageInput}
-                aria-label="Page number"
-              />
-              / {numPages}
-            </span>
-          ) : (
-            <span className="ml-1">–</span>
-          )}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") e.currentTarget.blur();
+                    if (e.key === "Escape") {
+                      setPageInput(null);
+                      // Blur after the reset so onBlur doesn't commit the draft.
+                      requestAnimationFrame(() =>
+                        (e.target as HTMLInputElement).blur(),
+                      );
+                    }
+                  }}
+                  onBlur={commitPageInput}
+                  aria-label="Page number"
+                />
+                / {numPages}
+              </span>
+            ) : (
+              <span className="mx-1">–</span>
+            )}
+            <button
+              type="button"
+              className={iconButton}
+              onClick={() => goToPage(currentPage + 1)}
+              disabled={currentPage >= numPages}
+              aria-label="Next page"
+              title="Next page"
+            >
+              <ChevronDownIcon />
+            </button>
+          </div>
         </div>
-        <div className="flex items-center gap-0.5 sm:col-start-3 sm:row-start-1 sm:justify-self-end">
-          <button
-            type="button"
-            className={iconButton}
-            onClick={() => setZoomIndex((z) => z - 1)}
-            disabled={zoomIndex <= 0}
-            aria-label="Zoom out"
-            title="Zoom out"
+
+        {/* Flattened into the toolbar's rows on phones so the two groups can
+            sit on different rows; a single cluster on the right from sm up. */}
+        <div className="contents sm:col-start-3 sm:row-start-1 sm:flex sm:items-center sm:justify-self-end sm:gap-2">
+          <div
+            role="group"
+            aria-label="View"
+            className={`${group} order-3 mx-auto sm:order-none sm:mx-0`}
           >
-            <MinusIcon />
-          </button>
-          <span className="tabular-nums w-10 sm:w-11 text-center">{Math.round(zoom * 100)}%</span>
-          <button
-            type="button"
-            className={iconButton}
-            onClick={() => setZoomIndex((z) => z + 1)}
-            disabled={zoomIndex >= ZOOM_STEPS.length - 1}
-            aria-label="Zoom in"
-            title="Zoom in"
+            <button
+              type="button"
+              className={iconButton}
+              onClick={() => setZoomIndex((z) => z - 1)}
+              disabled={zoomIndex <= 0}
+              aria-label="Zoom out"
+              title="Zoom out"
+            >
+              <MinusIcon />
+            </button>
+            <button
+              type="button"
+              className="btn btn-ghost btn-xs sm:btn-sm w-12 px-0 font-normal tabular-nums"
+              onClick={() => setZoomIndex(ZOOM_STEPS.indexOf(1))}
+              aria-label={`Zoom ${Math.round(zoom * 100)}%, reset to 100%`}
+              title="Reset zoom"
+            >
+              {Math.round(zoom * 100)}%
+            </button>
+            <button
+              type="button"
+              className={iconButton}
+              onClick={() => setZoomIndex((z) => z + 1)}
+              disabled={zoomIndex >= ZOOM_STEPS.length - 1}
+              aria-label="Zoom in"
+              title="Zoom in"
+            >
+              <PlusIcon />
+            </button>
+            <span
+              className="mx-0.5 h-4 w-px bg-base-content/20"
+              aria-hidden="true"
+            ></span>
+            <button
+              type="button"
+              className={iconButton}
+              onClick={() => {
+                setFitMode((m) => (m === "width" ? "height" : "width"));
+                setZoomIndex(ZOOM_STEPS.indexOf(1));
+              }}
+              aria-label={
+                fitMode === "width" ? "Fit to height" : "Fit to width"
+              }
+              title={fitMode === "width" ? "Fit to height" : "Fit to width"}
+            >
+              {fitMode === "width" ? <FitHeightIcon /> : <FitWidthIcon />}
+            </button>
+          </div>
+
+          <div
+            role="group"
+            aria-label="Document"
+            className={`${group} order-2 sm:order-none`}
           >
-            <PlusIcon />
-          </button>
-          <button
-            type="button"
-            className={iconButton}
-            onClick={() => {
-              setFitMode((m) => (m === 'width' ? 'height' : 'width'));
-              setZoomIndex(ZOOM_STEPS.indexOf(1));
-            }}
-            aria-label={fitMode === 'width' ? 'Fit to height' : 'Fit to width'}
-            title={fitMode === 'width' ? 'Fit to height' : 'Fit to width'}
-          >
-            {fitMode === 'width' ? <FitHeightIcon /> : <FitWidthIcon />}
-          </button>
-          <a href={url} download className={iconButton} aria-label="Download PDF" title="Download">
-            <DownloadIcon />
-          </a>
-          <button
-            type="button"
-            className={iconButton}
-            onClick={() => printPdf(url)}
-            aria-label="Print PDF"
-            title="Print"
-          >
-            <PrintIcon />
-          </button>
+            <div ref={infoRef}>
+              <button
+                type="button"
+                className={`${iconButton} ${infoOpen ? "btn-active" : ""}`}
+                onClick={() => setInfoOpen((o) => !o)}
+                aria-label="Document info"
+                aria-expanded={infoOpen}
+                title="Document info"
+              >
+                <InfoIcon />
+              </button>
+              {/* Anchored to the toolbar (not the button) so it always lines up
+                  with the viewer's right edge, even when the toolbar wraps. */}
+              {infoOpen && (
+                <div
+                  role="dialog"
+                  aria-label="Document info"
+                  className="absolute right-2 top-full z-20 mt-1 w-max max-w-[16rem] rounded-box border border-base-300 bg-base-100 p-3 text-sm shadow-xl"
+                >
+                  <p className="text-base-content/60 text-xs">Last updated</p>
+                  <p className="font-medium">{updated ?? "Unknown"}</p>
+                  <p className="text-base-content/60 text-xs mt-2">File</p>
+                  <p className="font-medium break-all">{fileName}</p>
+                </div>
+              )}
+            </div>
+            <a
+              href={url}
+              download
+              className={iconButton}
+              aria-label="Download PDF"
+              title="Download"
+            >
+              <DownloadIcon />
+            </a>
+            <button
+              type="button"
+              className={iconButton}
+              onClick={() => printPdf(url)}
+              aria-label="Print PDF"
+              title="Print"
+            >
+              <PrintIcon />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -386,7 +630,7 @@ export default function PdfDocument({ url, title }: PdfDocumentProps) {
         onScroll={handleScroll}
         className="flex-1 min-h-0 overflow-auto bg-base-200 p-4"
         // Reserve the scrollbar's space so it can't change the page width.
-        style={{ scrollbarGutter: 'stable' }}
+        style={{ scrollbarGutter: "stable" }}
       >
         <Document
           file={url}
@@ -406,7 +650,12 @@ export default function PdfDocument({ url, title }: PdfDocumentProps) {
           error={
             <div className="flex flex-col items-center justify-center gap-4 p-12 text-base-content/60">
               <p>Couldn't load the PDF preview.</p>
-              <a href={url} target="_blank" rel="noopener noreferrer" className="btn btn-primary">
+              <a
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-primary"
+              >
                 Open PDF
               </a>
             </div>
@@ -422,7 +671,10 @@ export default function PdfDocument({ url, title }: PdfDocumentProps) {
                 }}
                 data-page-index={i}
                 className="mx-auto shrink-0 bg-white shadow-lg"
-                style={{ width: pageWidth, height: Math.floor(pageWidth * ratio) }}
+                style={{
+                  width: pageWidth,
+                  height: Math.floor(pageWidth * ratio),
+                }}
               >
                 {nearbyPages.has(i) && (
                   <Page
