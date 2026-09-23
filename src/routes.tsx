@@ -20,6 +20,7 @@ import FactoryScheduler from './pages/projects/FactoryScheduler';
 import PetCtSim from './pages/projects/PetCtSim';
 import WebPlanner from './pages/projects/WebPlanner';
 import FastApiReactStarter from './pages/projects/FastApiReactStarter';
+import QrCodeGenerator from './pages/projects/QrCodeGenerator';
 import GamesIndex from './pages/GamesIndex';
 import GameLayout from './components/GameLayout';
 import { games } from './data/games';
@@ -47,6 +48,7 @@ export const routes: RouteRecord[] = [
   { path: 'projects/pet-ct-sim', element: <PetCtSim /> },
   { path: 'projects/web-planner', element: <WebPlanner /> },
   { path: 'projects/fastapi-react-starter', element: <FastApiReactStarter /> },
+  { path: 'projects/qr-code-generator', element: <QrCodeGenerator /> },
     // Games
   { path: 'projects/games', element: <GamesIndex /> },
   ...games.map((game) => ({

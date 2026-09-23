@@ -9,6 +9,14 @@ const PlaygroundThumbnail = () => (
   </div>
 );
 
+const QrCodeThumbnail = () => (
+  <div className="flex items-center justify-center w-full h-full bg-base-200">
+    <svg viewBox="0 0 24 24" width="56" height="56" fill="currentColor" aria-hidden="true">
+      <path d="M3 3h8v8H3V3zm2 2v4h4V5H5zm8-2h8v8h-8V3zm2 2v4h4V5h-4zM3 13h8v8H3v-8zm2 2v4h4v-4H5zm10 0h2v2h-2v-2zm4 0h2v2h-2v-2zm-4 4h2v2h-2v-2zm4 0h2v2h-2v-2zm-2-2h2v2h-2v-2z" />
+    </svg>
+  </div>
+);
+
 export interface Project {
   title: string;
   desc: string;
@@ -65,6 +73,13 @@ export const projects: Project[] = [
     url: '/projects/playgrounds',
     tags: ['Interactive', 'React', 'Python'],
     featured: false,
+  },
+  {
+    title: 'QR Code Generator',
+    Media: QrCodeThumbnail,
+    desc: 'A tool to generate custom-styled QR codes',
+    url: '/projects/qr-code-generator',
+    tags: ['Interactive', 'React'],
   },
   {
     title: 'Web Planner',
