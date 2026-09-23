@@ -68,81 +68,11 @@ export default function SidebarMenu() {
           Resume
         </Link>
       </li>
-      <li
-        ref={cvItemRef}
-        onMouseEnter={onCv ? openFlyout : undefined}
-        onMouseLeave={onCv ? scheduleClose : undefined}
-      >
-        <Link
-          className={`${active(onCv)} flex w-full items-center justify-between`}
-          to="/cv"
-          onFocus={onCv ? openFlyout : undefined}
-          onBlur={onCv ? scheduleClose : undefined}
-        >
-          <span>CV</span>
-          {onCv && (
-            <button
-              type="button"
-              aria-label={subOpen ? 'Hide CV sections' : 'Show CV sections'}
-              aria-expanded={subOpen}
-              className={`-my-2 -mr-2 p-2 transition-transform ${subOpen ? 'max-lg:rotate-90' : ''}`}
-              onClick={(e) => {
-                // On mobile this toggles the inline submenu instead of navigating.
-                e.preventDefault();
-                e.stopPropagation();
-                setSubOpen((o) => !o);
-              }}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-                role="img"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                style={{ fill: 'currentColor' }}
-              >
-                <path fill="currentColor" fillRule="evenodd" d="M9.97 7.47a.75.75 0 0 1 1.06 0l4 4a.75.75 0 0 1 0 1.06l-4 4a.75.75 0 1 1-1.06-1.06L13.44 12L9.97 8.53a.75.75 0 0 1 0-1.06" clipRule="evenodd"></path>
-              </svg>
-            </button>
-          )}
-          
+      <li>
+        <Link className={active(/^\/cv/.test(pathname))} to="/cv">
+          CV
         </Link>
-
-        {/* Inline submenu for touch devices, where the hover flyout can't open */}
-        {onCv && subOpen && (
-          <ul className="lg:hidden">
-            {cvSections.map(([id, label]) => (
-              <li key={id}>
-                <a className="text-sm" href={`/cv#${id}`}>
-                  {label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        )}
       </li>
-
-      {onCv &&
-        flyout &&
-        createPortal(
-          <ul
-            className="menu menu-sm fixed z-50 w-56 rounded-box border border-base-content/10 bg-base-100 shadow-xl max-lg:hidden"
-            style={{ top: flyout.top, left: flyout.left }}
-            onMouseEnter={openFlyout}
-            onMouseLeave={scheduleClose}
-          >
-            {cvSections.map(([id, label]) => (
-              <li key={id}>
-                {/* Plain anchor so the browser scrolls natively to the section */}
-                <a className="text-sm" href={`/cv#${id}`} onClick={() => setFlyout(null)}>
-                  {label}
-                </a>
-              </li>
-            ))}
-          </ul>,
-          document.body,
-        )}
     </ul>
   );
 }

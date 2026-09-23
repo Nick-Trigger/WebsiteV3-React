@@ -1,11 +1,15 @@
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import BaseLayout from './BaseLayout';
+
+// pdf.js needs browser APIs, so load the renderer only on the client
+// (never during the static prerender).
+const PdfDocument = lazy(() => import('./PdfDocument'));
 
 interface PdfViewerPageProps {
   pageTitle: string;
   backTo: string;
   heading: string;
-  subtitle: string;
   pdfUrl: string;
   buttonText?: string;
 }
@@ -26,65 +30,43 @@ const BackArrow = () => (
   </svg>
 );
 
-const DownloadIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-    <polyline points="7 10 12 15 17 10"></polyline>
-    <line x1="12" y1="15" x2="12" y2="3"></line>
-  </svg>
-);
-
 export default function PdfViewerPage({
   pageTitle,
   backTo,
   heading,
-  subtitle,
   pdfUrl,
   buttonText,
 }: PdfViewerPageProps) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  const spinner = (
+    <div className="flex justify-center p-12">
+      <span className="loading loading-spinner loading-lg"></span>
+    </div>
+  );
+
   return (
     // remove default padding and max-width so the PDF can use the full viewport
-    <BaseLayout title={pageTitle} includeSidebar={true} contentClassName="p-0 lg:max-w-none flex flex-grow flex-col items-center">
-      <div className="flex flex-grow items-center justify-between mb-8 w-full mx-auto px-2">
-        <div>
-          <Link to={backTo} className="btn btn-sm gap-1 -ml-2 mb-1">
-            {buttonText ? (
-              <>
-                <BackArrow /> {buttonText}
-              </> ) : (
-              <>
-                <BackArrow /> Back to project
-              </>
-            )}
-          </Link>
-          <h1 className="text-3xl w-full font-bold">{heading}</h1>
-          <p className="text-base-content/60 text-sm mt-1">{subtitle}</p>
-        </div>
+    <BaseLayout title={pageTitle} includeSidebar={true} contentClassName="p-0 w-full min-w-0 lg:max-w-none flex flex-grow flex-col items-center">
+      {/* The viewer's toolbar shows the file name; keep a real heading for SEO
+          and screen readers. */}
+      <h1 className="sr-only">{heading}</h1>
+
+      <div className="w-full max-w-6xl px-2">
+        {mounted ? (
+          <Suspense fallback={spinner}>
+            <PdfDocument url={pdfUrl} title={pageTitle} />
+          </Suspense>
+        ) : (
+          spinner
+        )}
       </div>
 
-      <div className="w-full rounded-xl overflow-hidden shadow-2xl border border-base-300">
-        <object
-          data={`${pdfUrl}#toolbar=1&view=FitH`}
-          type="application/pdf"
-          style={{ width: '100%', height: '90vh', minHeight: '600px', display: 'block' }}
-        >
-          <div className="flex flex-col items-center justify-center gap-4 p-12 text-base-content/60">
-            <p>Your browser doesn't support inline PDFs.</p>
-            <a href={pdfUrl} target="_blank" rel="noopener noreferrer" className="btn btn-primary">
-              Open PDF
-            </a>
-          </div>
-        </object>
+      <div className="w-full max-w-6xl px-2 mt-6 mb-12">
+        <Link to={backTo} className="btn btn-sm gap-1">
+          <BackArrow /> {buttonText ?? 'Back to project'}
+        </Link>
       </div>
     </BaseLayout>
   );
