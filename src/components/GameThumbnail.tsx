@@ -365,6 +365,41 @@ const pong: Draw = (ctx, w, h) => {
   ctx.fill();
 };
 
+const pinball: Draw = (ctx, w, h) => {
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(0, 0, w, h);
+  const unit = Math.min(w, h);
+  for (let i = 0; i < 3; i++) {
+    const bx = w * (0.3 + i * 0.2);
+    const by = h * (i === 1 ? 0.45 : 0.3);
+    const r = unit * 0.08;
+    ctx.beginPath();
+    ctx.arc(bx, by, r, 0, Math.PI * 2);
+    ctx.fillStyle = Math.random() < 0.3 ? '#fde047' : '#f97316';
+    ctx.fill();
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#fff7ed';
+    ctx.stroke();
+  }
+  ctx.strokeStyle = '#e2e8f0';
+  ctx.lineWidth = unit * 0.035;
+  ctx.lineCap = 'round';
+  const fy = h * 0.85;
+  const fl = w * 0.16;
+  const la = (Math.random() < 0.5 ? 1 : -1) * 0.45;
+  const ra = (Math.random() < 0.5 ? 1 : -1) * 0.45;
+  ctx.beginPath();
+  ctx.moveTo(w * 0.3, fy);
+  ctx.lineTo(w * 0.3 + Math.cos(la) * fl, fy + Math.sin(la) * fl);
+  ctx.moveTo(w * 0.7, fy);
+  ctx.lineTo(w * 0.7 - Math.cos(ra) * fl, fy + Math.sin(ra) * fl);
+  ctx.stroke();
+  ctx.fillStyle = '#e5e7eb';
+  ctx.beginPath();
+  ctx.arc(w * (0.35 + Math.random() * 0.3), h * (0.55 + Math.random() * 0.15), unit * 0.03, 0, Math.PI * 2);
+  ctx.fill();
+};
+
 const fallback: Draw = (ctx, w, h) => {
   const g = ctx.createLinearGradient(0, 0, w, h);
   g.addColorStop(0, '#fb923c');
@@ -387,6 +422,7 @@ const THUMBS: Record<string, Draw> = {
   breakout,
   'sliding-puzzle': puzzle,
   pong,
+  pinball,
 };
 
 const ROTATE_MS = 7000;

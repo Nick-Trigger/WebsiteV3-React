@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import BaseLayout from './BaseLayout';
 import ClientOnly from './ClientOnly';
 import type { Game } from '../data/games';
+import { GameFullscreenContext } from './GameFullscreen';
 
 type FsElement = HTMLElement & {
   webkitRequestFullscreen?: () => Promise<void> | void;
@@ -208,7 +209,9 @@ export default function GameLayout({ game }: { game: Game }) {
               </div>
             }
           >
-            <Component />
+            <GameFullscreenContext.Provider value={{ isFullscreen: isFs, toggleFullscreen }}>
+              <Component />
+            </GameFullscreenContext.Provider>
           </ClientOnly>
         </div>
       </div>

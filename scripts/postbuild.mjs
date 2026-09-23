@@ -38,6 +38,7 @@ const paths = [
   '/projects/games/pong',
   '/projects/games/sliding-puzzle',
   '/projects/games/whack-a-mole',
+  '/projects/games/pinball',
   '/projects/playgrounds',
   '/projects/playgrounds/python',
   '/projects/playgrounds/javascript',
