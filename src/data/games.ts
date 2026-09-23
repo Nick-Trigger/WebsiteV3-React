@@ -7,6 +7,7 @@ import Breakout from '../games/Breakout'
 import Pong from '../games/Pong';
 import SlidingPuzzle from '../games/SlidingPuzzle'
 import WhackAMole from '../games/WhackAMole'
+import Pinball from '../games/Pinball'
 
 export interface Game {
   /** URL slug; the route is /projects/games/<slug>. */
@@ -28,6 +29,23 @@ export interface Game {
  * so it lands in the sitemap.
  */
 export const games: Game[] = [
+  {
+    slug: 'pinball',
+    title: 'Pinball',
+    description: 'Flip, bump and keep the ball in play.',
+    tags: ['NEW', 'Arcade'],
+
+    instructions: [
+      'Plays in fullscreen only: hit Fullscreen, then Start game',
+      'Hold SPACE to pull the plunger, release to launch. A flips left, D or L flips right',
+      'Skill shot: plunge into the flashing U-F-O lane for 10,000',
+      'Light all three U-F-O lanes to raise the bonus multiplier (flippers rotate the lit lanes)',
+      'Knock down Z-A-P to light the lock, then shoot the Black Hole. Lock 2 balls for Multiball',
+      'During Multiball the Warp Ramp scores a growing Jackpot. Five ramps earn an Extra Ball',
+      'M toggles sound',
+    ],
+    Component: Pinball,
+  },
   {
     slug: 'snake',
     title: 'Snake',
@@ -127,3 +145,4 @@ export const games: Game[] = [
     Component: WhackAMole,
   },
 ];
+
