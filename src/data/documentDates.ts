@@ -11,6 +11,6 @@ export interface DocumentDate {
 }
 
 export const documentDates = {
-  resume: { iso: '2026-08-06', label: 'August 6, 2026' },
-  cv: { iso: '2026-08-06', label: 'August 6, 2026' },
+  resume: { iso: '2026-09-04', label: 'September 4, 2026' },
+  cv: { iso: '2026-09-04', label: 'September 4, 2026' },
 } satisfies Record<string, DocumentDate>;
