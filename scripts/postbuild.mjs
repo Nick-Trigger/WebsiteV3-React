@@ -28,6 +28,7 @@ const paths = [
   '/projects/pet-ct-sim',
   '/projects/web-planner',
   '/projects/fastapi-react-starter',
+  '/projects/qr-code-generator',
   '/projects/games',
   '/projects/games/snake',
   '/projects/games/2048',

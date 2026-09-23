@@ -2,7 +2,7 @@ import type { RouteRecord } from 'vite-react-ssg';
 
 import Home from './pages/Home';
 import Projects from './pages/Projects';
-import Cv from './pages/Cv';
+// import Cv from './pages/Cv';
 import ResumeViewer from './pages/ResumeViewer';
 import CvViewer from './pages/cvViewer';
 import NotFound from './pages/NotFound';
@@ -20,6 +20,7 @@ import FactoryScheduler from './pages/projects/FactoryScheduler';
 import PetCtSim from './pages/projects/PetCtSim';
 import WebPlanner from './pages/projects/WebPlanner';
 import FastApiReactStarter from './pages/projects/FastApiReactStarter';
+import QrCodeGenerator from './pages/projects/QrCodeGenerator';
 import GamesIndex from './pages/GamesIndex';
 import GameLayout from './components/GameLayout';
 import { games } from './data/games';
@@ -47,6 +48,7 @@ export const routes: RouteRecord[] = [
   { path: 'projects/pet-ct-sim', element: <PetCtSim /> },
   { path: 'projects/web-planner', element: <WebPlanner /> },
   { path: 'projects/fastapi-react-starter', element: <FastApiReactStarter /> },
+  { path: 'projects/qr-code-generator', element: <QrCodeGenerator /> },
     // Games
   { path: 'projects/games', element: <GamesIndex /> },
   ...games.map((game) => ({
@@ -60,7 +62,7 @@ export const routes: RouteRecord[] = [
     element: <PlaygroundLayout playground={playground} />,
   })),
 
-  // Prerendered so GitHub Pages can serve it as 404.html (see scripts/postbuild.mjs).
+  // Prerendered so it can be served as 404.html (see scripts/postbuild.mjs).
   { path: '404', element: <NotFound /> },
   // Client-side catch-all for any other unknown path.
   { path: '*', element: <NotFound /> },
