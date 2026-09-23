@@ -43,7 +43,7 @@ export interface Project {
 export const projects: Project[] = [
     {
     title: 'Radial Arterial Line Placement Simulation Device',
-    img: '/PulseMateLogo-01.svg',
+    img: '/3_2FRender.jpg',
     desc: 'Easy to use and durable, this training device is designed with students and medical professionals in mind.',
     url: '/projects/arm',
     badges: ['Patent Pending', 'VentureWell Summer 2023 Cohort'],
@@ -51,11 +51,11 @@ export const projects: Project[] = [
     featured: true,
   },
     {
-    title: 'CLABSI Prevention Device',
+    title: 'Central Line Hub Disinfection Device',
     img: '/clabfree.png',
     desc: 'A handheld medical device designed to disinfect central line hubs and prevent Central Line Associated Bloodstream Infections (CLABSI) in clinical settings. Features embedded C firmware, custom KiCad PCB design, and CAD-modeled enclosure.',
     url: '/projects/clabsi',
-    tags: ['Medical Device', 'Hardware', 'Embedded', 'CAD', 'C/C++', 'RTOS'],
+    tags: ['Medical Device', 'Hardware', 'Embedded', 'CAD', 'C/C++', 'RTOS', 'Linux'],
     featured: true,
   },
   {

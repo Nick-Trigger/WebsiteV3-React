@@ -1,11 +1,125 @@
 import ProjectLayout from '../../components/ProjectLayout';
+import { useEffect, useRef, useState } from 'react';
+import * as THREE from 'three';
+import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+
+const stlStyle = {
+  width: '100%',
+  height: '400px',
+  borderRadius: '1rem',
+  overflow: 'hidden',
+  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+};
+
+function ClientStlViewer({ stlFile = '/alptArm.stl', color = '#20cfff' }: {
+  stlFile?: string;
+  color?: string;
+}) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color('#F0F0F0');
+
+    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 10000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+
+    renderer.setPixelRatio(window.devicePixelRatio);
+    container.appendChild(renderer.domElement);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 1.5;
+
+    scene.add(new THREE.AmbientLight(0xffffff, 1.5));
+
+    const light = new THREE.DirectionalLight(0xffffff, 2);
+    light.position.set(1, 1, 1);
+    scene.add(light);
+
+    const loader = new STLLoader();
+    let mesh: THREE.Mesh | undefined;
+
+    loader.load(
+      stlFile,
+      (geometry) => {
+        geometry.computeBoundingBox();
+        geometry.center();
+
+        mesh = new THREE.Mesh(
+          geometry,
+          new THREE.MeshStandardMaterial({
+            color: color,
+            roughness: 0.7,
+            metalness: 0.1,
+          }),
+        );
+
+        scene.add(mesh);
+
+        const size = geometry.boundingBox?.getSize(new THREE.Vector3()).length() ?? 100;
+        camera.position.set(0, 0, size * 1.5);
+        camera.near = size / 100;
+        camera.far = size * 100;
+        camera.updateProjectionMatrix();
+        controls.target.set(0, 0, 0);
+      },
+      undefined,
+      () => setError(true),
+    );
+
+    const resize = () => {
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+    };
+
+    const observer = new ResizeObserver(resize);
+    observer.observe(container);
+    resize();
+
+    let animationFrame = 0;
+    const animate = () => {
+      controls.update();
+      renderer.render(scene, camera);
+      animationFrame = requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    return () => {
+      cancelAnimationFrame(animationFrame);
+      observer.disconnect();
+      controls.dispose();
+      mesh?.geometry.dispose();
+      if (mesh?.material instanceof THREE.Material) mesh.material.dispose();
+      renderer.dispose();
+      renderer.domElement.remove();
+    };
+  }, []);
+
+  return (
+    <div ref={containerRef} style={{ ...stlStyle, position: 'relative' }}>
+      {error && <span>Unable to load the STL model.</span>}
+    </div>
+  );
+}
 
 export default function Arm() {
   return (
     <ProjectLayout
       title="Pulse Mate: Arterial Line Placement Training Device"
       description="A low-cost, single-operator radial arterial line placement trainer with electronic pulse simulation and touchscreen control. VentureWell E-Team, Duke University. Patent Pending."
-      heroImage={['/alptprototype.jpg', '/alptbox2.png', '/3_2FRender.jpg', '/3_2BRender.jpg']}
+      heroImage={['/PulseMateLogo-01.svg', '/alptprototype.jpg', '/alptbox2.png', '/alptCntrlopen_view2.png', '/3_2FRender.jpg', '/3_2BRender.jpg']}
       badge="VentureWell E-Team"
       tags={['Medical Device', 'Embedded Systems', 'Duke EGR', 'Patent Pending']}
       docs={[
@@ -275,26 +389,37 @@ export default function Arm() {
 
       <hr />
 
-      <h2>3D Model: Revision 3</h2>
+      <h2>Revision 3</h2>
 
-      <div
-        className="not-prose rounded-xl overflow-hidden bg-neutral shadow-xl mb-6"
-        style={{ height: '370px', display: 'flex', justifyContent: 'center' }}
-      >
-        <iframe
-          title="Pulse Mate 3D model, revision 3"
-          src="/3_2Rotate.html"
-          width="1098"
-          height="822"
-          style={{
-            border: 'none',
-            display: 'block',
-            transform: 'scale(0.45)',
-            transformOrigin: 'top center',
-            flexShrink: 0,
-          }}
-        ></iframe>
-      </div>
+      <p>
+        While this project is no longer active, the team started work on a third revision of the device, which was never completed. The goal was to the goal was to create a more robust and user-friendly version and to move toward fully custom arm phantoms. The team designed a new enclosure, control system, and arm phantom.
+      </p>
+
+        <h3 className="">Enclosure</h3>
+        <p>Third revision of the enclosure.</p>
+        <div
+          className="not-prose rounded-xl overflow-hidden bg-neutral shadow-xl"
+          style={{ height: '300px', display: 'flex', justifyContent: 'center' }}
+        >
+          <iframe
+            title="Pulse Mate 3D model, revision 3"
+            src="/3_2Rotate.html"
+            width="1098"
+            height="822"
+            style={{
+              border: 'none',
+              display: 'block',
+              transform: 'scale(0.45)',
+              transformOrigin: 'top center',
+              flexShrink: 0,
+            }}
+          ></iframe>
+        </div>
+        <h3 className="">Arm Phantom Internal</h3>
+        <p>Internal structure of the designed forearm phantom.</p>
+        <div className="">
+          <ClientStlViewer stlFile="/alptArm.stl" color="#6d7eec" />
+        </div>
     </ProjectLayout>
   );
 }
