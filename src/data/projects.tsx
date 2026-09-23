@@ -42,6 +42,14 @@ export const projects: Project[] = [
     tags: ['Medical Device', 'CAD', 'Hardware', 'Embedded'],
     featured: true,
   },
+    {
+    title: 'CLABSI Prevention Device',
+    img: '/clabfree.png',
+    desc: 'A handheld medical device designed to disinfect central line hubs and prevent Central Line Associated Bloodstream Infections (CLABSI) in clinical settings. Features embedded C firmware, custom KiCad PCB design, and CAD-modeled enclosure.',
+    url: '/projects/clabsi',
+    tags: ['Medical Device', 'Hardware', 'Embedded', 'CAD', 'C/C++', 'RTOS'],
+    featured: true,
+  },
   {
     title: 'Browser Games',
     Media: GameThumbnail,
@@ -57,14 +65,6 @@ export const projects: Project[] = [
     url: '/projects/playgrounds',
     tags: ['Interactive', 'React', 'Python'],
     featured: false,
-  },
-  {
-    title: 'CLABSI Prevention Device',
-    img: '/clabfree.png',
-    desc: 'A handheld medical device designed to disinfect central line hubs and prevent Central Line Associated Bloodstream Infections (CLABSI) in clinical settings. Features embedded C firmware, custom KiCad PCB design, and CAD-modeled enclosure.',
-    url: '/projects/clabsi',
-    tags: ['Medical Device', 'Hardware', 'Embedded', 'CAD', 'C/C++', 'RTOS'],
-    featured: true,
   },
   {
     title: 'Web Planner',
