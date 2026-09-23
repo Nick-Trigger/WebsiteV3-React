@@ -1,4 +1,9 @@
 @import "tailwindcss";
+
+@theme {
+    --breakpoint-qr: 340px;
+}
+
 @plugin "@tailwindcss/typography";
 @plugin "daisyui";
 

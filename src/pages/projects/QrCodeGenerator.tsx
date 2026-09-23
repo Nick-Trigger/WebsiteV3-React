@@ -39,7 +39,7 @@ export default function QrCodeGenerator() {
 
       {/* The generator's controls need real horizontal room; below `sm` show a
           notice instead of a cramped, broken layout. */}
-      <div className="sm:hidden flex flex-col items-center gap-2 text-center rounded-xl border border-base-300 bg-base-200 p-8">
+      <div className="qr:hidden flex flex-col items-center gap-2 text-center rounded-xl border border-base-300 bg-base-200 p-8">
         <p className="font-semibold">A bigger screen is needed for this tool</p>
         <p className="text-sm text-base-content/60">
           The QR code generator's style controls need more room than this screen provides. Try
@@ -47,7 +47,7 @@ export default function QrCodeGenerator() {
         </p>
       </div>
 
-      <div className="hidden sm:block">
+      <div className="hidden qr:block">
         <ClientOnly
           fallback={
             <div className="flex items-center justify-center w-full h-96 rounded-xl border border-base-300 bg-base-200 text-base-content/50">
