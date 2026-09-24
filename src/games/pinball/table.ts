@@ -83,7 +83,7 @@ export const LANE_LETTERS = ['U', 'F', 'O'];
 // outlane guards: a short rubber ramp off each side wall ending in a rubber
 // post, so a ball sliding down the wall is kicked back toward the inlane
 // instead of dropping straight into the outlane
-const GUARD_L = { a: v(10, 486), b: v(34, 500) };
+const GUARD_L = { a: v(11, 480), b: v(32, 510) };
 export const OUTLANE_GUARDS = [GUARD_L, { a: v(mx(GUARD_L.a.x), GUARD_L.a.y), b: v(mx(GUARD_L.b.x), GUARD_L.b.y) }];
 export const OUTLANE_POSTS: Circle[] = OUTLANE_GUARDS.map((g) => ({ x: g.b.x, y: g.b.y, r: 5 }));
 
@@ -92,9 +92,9 @@ export const TARGETS = [180, 204, 228].map((x) => ({ x, y: 318, hw: 10 }));
 export const TARGET_LETTERS = ['Z', 'A', 'P'];
 
 // the "black hole" saucer (upper left): holds the ball, or locks it for multiball
-export const SAUCER = { x: 100, y: 170, r: 13 };
+export const SAUCER = { x: 100, y: 200, r: 18 };
 /** Direction the saucer kicks the ball back out: down-right, toward the flippers. */
-export const SAUCER_EJECT = unit(0.36, 0.93);
+export const SAUCER_EJECT = unit(0.36, 0.73);
 /** LOCK insert: just below the hole, pointing at it. */
 export const LOCK_ARROW = {
   x: SAUCER.x + SAUCER_EJECT.x * 48,

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 interface SmartLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   to: string;
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 /**

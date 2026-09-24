@@ -31,8 +31,8 @@ export interface Game {
 export const games: Game[] = [
   {
     slug: 'pinball',
-    title: 'Pinball',
-    description: 'Flip, bump and keep the ball in play.',
+    title: 'UFO INVASION Pinball',
+    description: 'A pinball game!',
     tags: ['NEW', 'Arcade'],
 
     instructions: [

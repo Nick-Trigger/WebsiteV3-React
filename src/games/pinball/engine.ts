@@ -104,8 +104,8 @@ const RAIL_UP_ACC = 1050;
 const RAIL_DOWN_ACC = 400;
 const BALL_SAVE_TIME = 8;
 const SKILL_SHOT = 10000;
-const READY_REMINDER = 6; // seconds between "ball ready" reminder chimes
-const SAUCER_MAX_FALL = 120; // px/s downward: falling faster than this skims over the black hole
+const READY_REMINDER = 4; // seconds between "ball ready" reminder chimes
+const SAUCER_MAX_FALL = 800; // px/s downward: falling faster than this skims over the black hole
 /** Plunger charge range that drops the ball into the U-F-O lanes (marked on the meter). */
 export const SKILL_BAND: [number, number] = [0.32, 0.45];
 
@@ -745,8 +745,8 @@ export class PinballEngine {
       const hit = this.hitSeg(b, k.a, k.b, 0.5);
       if (!hit) return;
       if (hit.impact > 40 && this.slingFlash[i] <= 0) {
-        b.vx += k.n.x * SLING_KICK;
-        b.vy += k.n.y * SLING_KICK;
+        b.vx += k.n.x * SLING_KICK * (1 + Math.random() * 0.1);
+        b.vy += k.n.y * SLING_KICK * (1 + Math.random() * 0.1);
         this.slingFlash[i] = 0.12;
         this.award(50, 5);
         this.sfx('sling');
@@ -817,7 +817,7 @@ export class PinballEngine {
 
     // the black hole only grabs balls shot up into it (or rolling slowly); a ball
     // dropping onto it from above, e.g. a plunge falling off the dome, skims over
-    const intoHole = b.vy < SAUCER_MAX_FALL && sp < 1100;
+    const intoHole = b.vy < SAUCER_MAX_FALL && sp < 1100; // nickhere
     if (this.t > b.noCapture && intoHole && Math.hypot(b.x - SAUCER.x, b.y - SAUCER.y) < SAUCER.r - 2) {
       this.onSaucer(b);
     }
