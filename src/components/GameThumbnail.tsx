@@ -365,39 +365,60 @@ const pong: Draw = (ctx, w, h) => {
   ctx.fill();
 };
 
+// ---- Pinball: the table's orange dot-matrix display ---------------------------
+// Same look as DotMatrix in games/pinball/render.ts, redrawn here so the
+// thumbnail doesn't pull the whole pinball engine into this bundle.
+let dmdSrc: CanvasRenderingContext2D | null = null;
+const DOT = 4;
 const pinball: Draw = (ctx, w, h) => {
-  ctx.fillStyle = '#0f172a';
-  ctx.fillRect(0, 0, w, h);
-  const unit = Math.min(w, h);
-  for (let i = 0; i < 3; i++) {
-    const bx = w * (0.3 + i * 0.2);
-    const by = h * (i === 1 ? 0.45 : 0.3);
-    const r = unit * 0.08;
-    ctx.beginPath();
-    ctx.arc(bx, by, r, 0, Math.PI * 2);
-    ctx.fillStyle = Math.random() < 0.3 ? '#fde047' : '#f97316';
-    ctx.fill();
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = '#fff7ed';
-    ctx.stroke();
+  const cols = Math.floor(w / DOT);
+  const rows = Math.floor(h / DOT);
+  if (!dmdSrc) {
+    const c = document.createElement('canvas');
+    dmdSrc = c.getContext('2d', { willReadFrequently: true })!;
   }
-  ctx.strokeStyle = '#e2e8f0';
-  ctx.lineWidth = unit * 0.035;
-  ctx.lineCap = 'round';
-  const fy = h * 0.85;
-  const fl = w * 0.16;
-  const la = (Math.random() < 0.5 ? 1 : -1) * 0.45;
-  const ra = (Math.random() < 0.5 ? 1 : -1) * 0.45;
-  ctx.beginPath();
-  ctx.moveTo(w * 0.3, fy);
-  ctx.lineTo(w * 0.3 + Math.cos(la) * fl, fy + Math.sin(la) * fl);
-  ctx.moveTo(w * 0.7, fy);
-  ctx.lineTo(w * 0.7 - Math.cos(ra) * fl, fy + Math.sin(ra) * fl);
-  ctx.stroke();
-  ctx.fillStyle = '#e5e7eb';
-  ctx.beginPath();
-  ctx.arc(w * (0.35 + Math.random() * 0.3), h * (0.55 + Math.random() * 0.15), unit * 0.03, 0, Math.PI * 2);
-  ctx.fill();
+  const s = dmdSrc;
+  s.canvas.width = cols;
+  s.canvas.height = rows;
+  s.fillStyle = '#000';
+  s.fillRect(0, 0, cols, rows);
+  s.fillStyle = '#fff';
+  s.textAlign = 'center';
+  s.textBaseline = 'middle';
+  const fit = (text: string, px: number) => {
+    do {
+      s.font = `bold ${px}px Arial, sans-serif`;
+      px--;
+    } while (s.measureText(text).width > cols - 8 && px > 6);
+  };
+  fit('UFO', 32);
+  s.fillText('UFO', cols / 2, rows * 0.32);
+  fit('INVASION', 22);
+  s.fillText('INVASION', cols / 2, rows * 0.72);
+  const data = s.getImageData(0, 0, cols, rows).data;
+
+  const on = new Path2D();
+  const off = new Path2D();
+  const r = DOT * 0.4;
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      const p = x * DOT + DOT / 2;
+      const q = y * DOT + DOT / 2;
+      const path = data[(y * cols + x) * 4] > 110 ? on : off;
+      path.moveTo(p + r, q);
+      path.arc(p, q, r, 0, Math.PI * 2);
+    }
+  }
+  ctx.fillStyle = '#0c0603';
+  ctx.fillRect(0, 0, w, h);
+  ctx.fillStyle = '#2a1407';
+  ctx.fill(off);
+  ctx.save();
+  ctx.shadowColor = '#ff7a1a';
+  ctx.shadowBlur = 6;
+  ctx.fillStyle = '#ff8c2a';
+  ctx.fill(on);
+  ctx.restore();
 };
 
 const fallback: Draw = (ctx, w, h) => {
@@ -425,7 +446,7 @@ const THUMBS: Record<string, Draw> = {
   pinball,
 };
 
-const ROTATE_MS = 7000;
+const ROTATE_MS = 600;
 const SLUGS = Object.keys(THUMBS);
 
 /**

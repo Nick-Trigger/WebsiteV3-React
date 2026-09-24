@@ -1121,9 +1121,11 @@ export class PinballRenderer {
 }
 
 // ---- dot-matrix display ------------------------------------------------------
-const DW = 128;
-const DH = 32;
-const DOT = 5;
+const DW = 160;
+const DH = 40;
+const DOT = 4;
+// Text layout below was tuned for a 32-row panel; scale it to DH.
+const TS = DH / 32;
 
 export class DotMatrix {
   private src: HTMLCanvasElement;
@@ -1161,12 +1163,12 @@ export class DotMatrix {
     s.textAlign = 'center';
     s.textBaseline = 'middle';
     if (bottom) {
-      this.fit(top, 15, DW - 4);
-      s.fillText(top, DW / 2, 10);
-      this.fit(bottom, 10, DW - 4);
-      s.fillText(bottom, DW / 2, 25);
+      this.fit(top, Math.round(15 * TS), DW - 4);
+      s.fillText(top, DW / 2, 10 * TS);
+      this.fit(bottom, Math.round(10 * TS), DW - 4);
+      s.fillText(bottom, DW / 2, 25 * TS);
     } else {
-      this.fit(top, 22, DW - 4);
+      this.fit(top, Math.round(22 * TS), DW - 4);
       s.fillText(top, DW / 2, DH / 2 + 1);
     }
     const data = s.getImageData(0, 0, DW, DH).data;

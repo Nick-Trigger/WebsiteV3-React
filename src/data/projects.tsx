@@ -17,6 +17,13 @@ const QrCodeThumbnail = () => (
   </div>
 );
 
+export interface Subproject {
+  title: string;
+  url: string;
+  /** Starred within the parent card only; doesn't put the parent on the home page. */
+  featured?: boolean;
+}
+
 export interface Project {
   title: string;
   desc: string;
@@ -32,6 +39,8 @@ export interface Project {
   tags?: string[];
   /** Featured projects are starred and also shown on the home page. */
   featured?: boolean;
+  /** Hand-picked children listed by name (no image) on the card. */
+  subprojects?: Subproject[];
   target?: string;
 }
 
@@ -65,6 +74,7 @@ export const projects: Project[] = [
     url: '/projects/games',
     tags: ['Interactive', 'React'],
     featured: false,
+    subprojects: [{ title: 'UFO Invasion Pinball', url: '/projects/games/pinball', featured: true }],
   },
   {
     title: 'Code Playgrounds',

@@ -21,6 +21,7 @@ export const ProjectCards = ({ items }: { items: Project[] }) => {
             badges={p.badges}
             target={p.target}
             featured={p.featured}
+            subprojects={p.subprojects}
           />
         </div>
       ))}
